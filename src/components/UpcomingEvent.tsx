@@ -1,42 +1,80 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Card, Icon, ListItem, Text } from "@rneui/themed";
+import Modal from "react-native-modal";
 
-import { TITLE_HOME_C } from "../constants";
+import { COORDINATION_MEETING_LIST, TITLE_HOME_C } from "../constants";
+import Datepicker from "./Datepicker";
+
+const getMonthName = (value: any) => {
+    const formatter = new Intl.DateTimeFormat('id', { month: 'long' });
+    return formatter.format(value);
+}
 
 const UpcomingEvent = () => {
     const [expanded, setExpanded] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: new Date() }) as any;
+
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible);
+    }
+
+    const RenderTitleDatepicker = () => {
+        return (
+            <Text style={styles.titleDatepicker}>{getMonthName(selectedDate.startDate)} {selectedDate.startDate?.getDate()}, {selectedDate.startDate?.getFullYear()} – {getMonthName(selectedDate.endDate)} {selectedDate.endDate?.getDate()}, {selectedDate.endDate?.getFullYear()}</Text>
+        )
+    }
 
     return (
-        <Card containerStyle={styles.card}>
-            <ListItem.Accordion
-                containerStyle={styles.accordionContainer}
-                content={
-                    <ListItem.Content style={styles.listItemContentContainer}>
-                        <Text style={ styles.title }>
-                            {TITLE_HOME_C}
-                        </Text>
-                    </ListItem.Content>
-                }
-                isExpanded={expanded}
-                onPress={() => {
-                    setExpanded(!expanded);
-                }}
-                icon={
-                    <Icon
-                        name='chevron-down'
-                        type="material-community"
-                        color='black'
-                    />
-                }
-            >
-                <ListItem>
-                    <ListItem.Content>
-                    </ListItem.Content>
-                </ListItem>
-            </ListItem.Accordion>
-        </Card>
+        <>
+            <Modal isVisible={isModalVisible} style={{ height: 50 }}>
+                <View style={styles.datepickerContainer}>
+                    <Datepicker toggleModal={toggleModal} setSelectedDate={setSelectedDate} />
+                </View>
+            </Modal>
+            <Card containerStyle={styles.card}>
+                <ListItem.Accordion
+                    containerStyle={styles.accordionContainer}
+                    content={
+                        <ListItem.Content style={styles.listItemContentContainer}>
+                            <Text style={styles.title}>
+                                {TITLE_HOME_C}
+                            </Text>
+                            <TouchableOpacity onPress={toggleModal}>
+                                <RenderTitleDatepicker />
+                            </TouchableOpacity>
+                        </ListItem.Content>
+                    }
+                    isExpanded={expanded}
+                    onPress={() => {
+                        setExpanded(!expanded);
+                    }}
+                    icon={
+                        <Icon
+                            name='chevron-down'
+                            type="material-community"
+                            color='black'
+                        />
+                    }
+                >
+                    <ListItem>
+                        <ListItem.Content>
+                            {COORDINATION_MEETING_LIST.map((item) => (
+                                <View key={item.eventId}>
+                                    <Text style={styles.heading}>{item.eventDate}</Text>
+                                    <Card key={item.eventId} containerStyle={styles.eventCard}>
+                                        <Text style={styles.eventName}>{item.eventName}</Text>
+                                        <Text style={styles.date}>{item.eventPlace}</Text>
+                                    </Card>
+                                </View>
+                            ))}
+                        </ListItem.Content>
+                    </ListItem>
+                </ListItem.Accordion>
+            </Card>
+        </>
     )
 }
 
@@ -54,12 +92,14 @@ const styles = StyleSheet.create({
         padding: 0
     },
     date: {
-        color: '#099057',
-        fontWeight: 'bold',
         marginTop: 10
     },
+    datepickerContainer: { marginTop: 100, display: 'flex', flexWrap: 'wrap', marginLeft: -20 },
     eventCard: {
-        borderRadius: 13
+        borderRadius: 13,
+        marginLeft: 0,
+        width: '100%',
+        marginBottom: 30
     },
     heading: {
         fontSize: 14,
@@ -78,9 +118,8 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 10 },
-    province: {
-        color: '#636363',
-        marginVertical: 10
+    eventName: {
+        fontWeight: 'bold'
     },
     submitDate: {
         textAlign: 'center',
@@ -92,8 +131,17 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 10,
         marginHorizontal: 15,
-        paddingTop: 10, 
+        paddingTop: 10,
         paddingBottom: 0
+    },
+    titleDatepicker: {
+        fontSize: 17,
+        marginBottom: 10,
+        marginTop: 10,
+        padding: 10,
+        borderWidth: 2,
+        borderRadius: 10,
+        borderColor: '#D0D5DD'
     }
 });
 

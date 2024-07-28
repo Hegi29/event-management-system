@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { Card, Icon, ListItem, Text } from "@rneui/themed";
+import { Avatar, Card, Icon, ListItem, Text } from "@rneui/themed";
 
-import { TITLE_HOME_D } from "../constants";
+import { ACTIVITY_LIST, TITLE_HOME_D } from "../constants";
 
 const ListActivity = () => {
     const [expanded, setExpanded] = useState(false);
@@ -14,7 +14,7 @@ const ListActivity = () => {
                 containerStyle={styles.accordionContainer}
                 content={
                     <ListItem.Content style={styles.listItemContentContainer}>
-                        <Text style={ styles.title }>
+                        <Text style={styles.title}>
                             {TITLE_HOME_D}
                         </Text>
                     </ListItem.Content>
@@ -33,6 +33,24 @@ const ListActivity = () => {
             >
                 <ListItem containerStyle={{ paddingTop: 0 }}>
                     <ListItem.Content>
+                        {ACTIVITY_LIST.map((item) => (
+                            <View key={item.activityId}>
+                                <Avatar containerStyle={{ position: 'absolute' }}
+                                    size={32}
+                                    rounded
+                                    source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
+                                />
+                                <View style={{ display: 'flex', flexDirection: 'row', marginLeft: 40 }}>
+                                    <Text style={{ marginRight: 10, fontWeight: 'bold' }}>{item.userName}</Text>
+                                    <Text>{item.createdAt}</Text>
+                                </View>
+                                <View style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', marginLeft: 40, marginBottom: item.activity ? 0 : 20 }}>
+                                    <Text>{item.type}</Text>
+                                    <Text style={{color: '#1072BA'}}>{item.eventName}</Text>
+                                </View>
+                                 {item.activity && <Text style={{ marginLeft: 40, marginBottom: 20, padding: 10, borderWidth: 1, borderRadius: 10, marginTop: 5 }}>"{item.activity}"</Text>}
+                            </View>
+                        ))}
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>
@@ -92,7 +110,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 10,
         marginHorizontal: 15,
-        paddingTop: 10, 
+        paddingTop: 10,
         paddingBottom: 0
     }
 });

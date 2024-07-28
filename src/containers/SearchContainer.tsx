@@ -1,6 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Card, Icon, Input, Text } from "@rneui/themed";
+
+import SelectCustom from "../components/SelectCustom";
 
 type SearchContainerProps = { title: string };
 
@@ -19,23 +21,17 @@ const SearchContainer = ({ title }: SearchContainerProps) => {
                 inputContainerStyle={styles.searchField}
             />
             <Text style={styles.title}>Status</Text>
-            <Input placeholder='Status' leftIcon={
-                <Icon
-                    name='search'
-                    size={24}
-                    color='grey'
-                    containerStyle={styles.iconContainer}
-                />
-            }
-                inputContainerStyle={styles.searchField}
-            />
+            <View style={{paddingHorizontal: 10}}>
+                <SelectCustom />
+            </View>
         </Card>
     )
 }
 
 const styles = StyleSheet.create({
     cardContainer: {
-        borderRadius: 10, padding: 0, paddingTop: 10
+        borderRadius: 10, padding: 0, paddingTop: 10,
+        height: 195
     },
     iconContainer: {
         paddingLeft: 10

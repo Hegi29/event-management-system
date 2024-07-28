@@ -65,11 +65,11 @@ const CreateVenueTab = ({ isDraft }: any) => {
                 // icon={{ name: 'home', type: 'material', color: '#1072BA' }}
                 />
             </Tab>
-            {index === CREATE_VENUE_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} isDraft={isDraft} />}
-            {index === CREATE_VENUE_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} isDraft={isDraft} />}
-            {index === CREATE_VENUE_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} isDraft={isDraft} />}
-            {index === CREATE_VENUE_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} isDraft={isDraft} />}
-            {index === CREATE_VENUE_TAB.ENVIRONMENT && <EnvironmentTab index={index} setIndex={setIndex} isDraft={isDraft} />}
+            {index === CREATE_VENUE_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
+            {index === CREATE_VENUE_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
+            {index === CREATE_VENUE_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
+            {index === CREATE_VENUE_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
+            {index === CREATE_VENUE_TAB.ENVIRONMENT && <EnvironmentTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
         </View>
     );
 };

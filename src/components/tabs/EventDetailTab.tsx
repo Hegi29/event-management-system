@@ -2,20 +2,44 @@ import { useState } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
 import { Divider, Input, Text, CheckBox, Button } from '@rneui/themed';
+import Modal from 'react-native-modal';
 
 const EventDetailTab = ({ index, setIndex, navigation, isDraft }: any) => {
     const [selectedIndexEvent, setIndexEvent] = useState(0);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleClose = () => {
-        navigation.navigate('Event');
+        // navigation.navigate('Event');
     }
 
     const handleNext = () => {
-        setIndex(index + 1);
+        setIndex(1);
+    }
+
+    const handleSave = () => {
+        setIsModalVisible(!isModalVisible);
+    }
+
+    const save = () => {
+        setIsModalVisible(!isModalVisible);
+    }
+
+    const discard = () => {
+        setIsModalVisible(!isModalVisible);
     }
 
     return (
         <View style={{ padding: 10 }}>
+            <Modal isVisible={isModalVisible} style={{ height: 50 }}>
+                <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 10 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10 }}>Unsaved changes</Text>
+                    <Text>Do you want to save or discard changes?</Text>
+                    <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        <Button buttonStyle={{ borderRadius: 10 }} type="outline" onPress={discard}>Discard</Button>
+                        <Button buttonStyle={{ borderRadius: 10, backgroundColor: '#0D5B95' }} containerStyle={{ marginLeft: 5 }} onPress={save}>Save changes</Button>
+                    </View>
+                </View>
+            </Modal>
             <Text h4 style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Event Detail</Text>
             <Text style={{ marginBottom: 20 }}>Please fill in the required data</Text>
             <Divider />
@@ -162,7 +186,7 @@ const EventDetailTab = ({ index, setIndex, navigation, isDraft }: any) => {
 
             <View style={styles.buttonContainer}>
                 <Button type='outline' buttonStyle={{ width: 80, marginRight: 5, borderRadius: 10, borderColor: '#000' }} titleStyle={{ color: '#000' }} onPress={handleClose}>Close</Button>
-                {isDraft && <Button buttonStyle={{ width: 80, marginRight: 5, borderRadius: 10 }}>Save</Button>}
+                {isDraft && <Button buttonStyle={{ width: 80, marginRight: 5, borderRadius: 10 }} onPress={handleSave}>Save</Button>}
                 <Button buttonStyle={{ width: 80, borderRadius: 10 }} onPress={handleNext}>Next</Button>
             </View>
         </View>

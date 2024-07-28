@@ -16,7 +16,7 @@ const EventRequestingRevision = () => {
                 content={
                     <ListItem.Content style={styles.listItemContentContainer}>
                         <Image source={EventRequestingRevisionImage} style={styles.imageIconTitle} />
-                        <Text style={ styles.title }>
+                        <Text style={styles.title}>
                             {TITLE_HOME_A}
                         </Text>
                     </ListItem.Content>
@@ -85,7 +85,9 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     eventCard: {
-        borderRadius: 13
+        borderRadius: 13,
+        marginLeft: 0,
+        width: '100%'
     },
     heading: {
         fontSize: 14,
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 10,
         marginHorizontal: 15,
-        paddingTop: 10, 
+        paddingTop: 10,
         paddingBottom: 0
     }
 });

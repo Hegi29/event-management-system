@@ -1,50 +1,44 @@
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Image, Text } from '@rneui/themed';
 
 import { LogomarkImage, MenuImage, NotificationImage } from '../assets/images';
 import { CreateEvent, CreateVenue, Event, EventDraft, Home, Report, Setting, Support, Users, Venue } from '../screens';
+import { APP_TITLE } from '../constants';
 import CustomDrawerContent from './CustomDrawer';
 
 const Drawer = createDrawerNavigator();
 
 const TopLeftNav = () => {
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-      <Image source={LogomarkImage} style={{ marginLeft: 15, marginRight: 10, height: 40, width: 40 }} />
-      <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 17, paddingTop: 8 }}>Nautical Nexus</Text>
+    <View style={styles.containerHeader}>
+      <Image source={LogomarkImage} style={styles.logo} />
+      <Text style={styles.title}>{APP_TITLE}</Text>
     </View>
   )
 }
 
 const TopRightNav = ({ navigation }: any) => {
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', marginRight: 15 }}>
-      <View style={{ backgroundColor: '#fff', padding: 5, borderRadius: 5, marginRight: 10 }}>
-        <Image source={NotificationImage} style={{ height: 20, width: 20 }} />
+    <View style={{ ...styles.containerHeader, marginRight: 15 }}>
+      <View style={{ ...styles.containerImage, marginRight: 10 }}>
+        <Image source={NotificationImage} style={styles.imageRight} />
       </View>
-      <View style={{ backgroundColor: '#fff', padding: 5, borderRadius: 5 }}>
-        <Image source={MenuImage} onPress={navigation.toggleDrawer} style={{ height: 20, width: 20 }} />
+      <View style={styles.containerImage}>
+        <Image source={MenuImage} onPress={navigation.toggleDrawer} style={styles.imageRight} />
       </View>
     </View>
   )
 }
 
 const DrawerNavigation = ({ navigationRef }: any) => {
-  // useEffect(() => {
-  //   console.log('x: ', props.navigationRef.getCurrentRoute());
-  // }, [props]);
-
   return (
     <Drawer.Navigator screenOptions={({ navigation }) => ({
-      drawerStyle: {
-        backgroundColor: '#408EC9'
-      },
+      drawerStyle: styles.drawerBackground,
       drawerPosition: 'right',
       title: "",
-      headerStyle: { backgroundColor: '#2788A8' },
-      // header: () => <Image source={{ uri: 'https://i.pinimg.com/736x/c6/82/73/c68273edeb333a7f3765c02ed509b55d.jpg' }} style={{height: 20, width: 20}} />,
+      headerStyle: styles.headerBackground,
       headerLeft: () => <TopLeftNav />,
       headerRight: () => <TopRightNav navigation={navigation} />
     })}
@@ -64,14 +58,14 @@ const DrawerNavigation = ({ navigationRef }: any) => {
   );
 }
 
-// const styles = StyleSheet.create({
-//   image: {
-//       width: 40,
-//       height: 40,
-//       marginTop: 80,
-//       borderRadius: 10,
-//       // marginBottom: 20
-//   }
-// })
+const styles = StyleSheet.create({
+  containerHeader: { flexDirection: 'row', justifyContent: 'flex-start' },
+  containerImage: { backgroundColor: '#fff', padding: 5, borderRadius: 5 },
+  drawerBackground: { backgroundColor: '#408EC9' },
+  headerBackground: { backgroundColor: '#2788A8' },
+  imageRight: { height: 20, width: 20 },
+  logo: { marginLeft: 15, marginRight: 10, height: 40, width: 40 },
+  title: { color: '#fff', fontWeight: 'bold', fontSize: 17, paddingTop: 8 }
+})
 
 export default DrawerNavigation
