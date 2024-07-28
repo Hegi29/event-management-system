@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 
-import { Button, Card, Icon, Image, ListItem, Text } from "@rneui/themed";
+import { Button, Card, Chip, Icon, Image, ListItem, Text } from "@rneui/themed";
 
+import { DetailEventImage, EventRequestingRevisionImage } from "../assets/images";
 import { EVENT_LIST, TITLE_HOME_A } from "../constants";
-import { DetailEventImage } from "../assets/images";
 
 const EventRequestingRevision = () => {
     const [expanded, setExpanded] = useState(false);
@@ -12,11 +12,13 @@ const EventRequestingRevision = () => {
     return (
         <Card containerStyle={styles.card}>
             <ListItem.Accordion
-                style={{ paddingLeft: 0 }}
-                containerStyle={{ borderRadius: 20, paddingLeft: 0 }}
+                containerStyle={styles.listItemAccordionContainer}
                 content={
-                    <ListItem.Content>
-                        <Text style={styles.title}><Icon name="event" type="material" size={24} color="#000" style={{ paddingRight: 5 }} />{TITLE_HOME_A}</Text>
+                    <ListItem.Content style={styles.listItemContentContainer}>
+                        <Image source={EventRequestingRevisionImage} style={styles.imageIconTitle} />
+                        <Text style={ styles.title }>
+                            {TITLE_HOME_A}
+                        </Text>
                     </ListItem.Content>
                 }
                 isExpanded={expanded}
@@ -40,8 +42,20 @@ const EventRequestingRevision = () => {
                                 <Text style={styles.province}>{item.venueName}</Text>
                                 <Text style={styles.date}>{item.date}</Text>
                                 <Text style={styles.province}>{item.province}</Text>
-                                <Text style={styles.province}>{item.status}</Text>
-                                <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail}/>} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
+                                <Chip
+                                    title={item.status}
+                                    icon={{
+                                        name: 'circle',
+                                        type: 'font-awesome',
+                                        size: 10,
+                                        color: '#F04438'
+                                    }}
+                                    type='outline'
+                                    containerStyle={{ paddingHorizontal: 0 }}
+                                    titleStyle={{ color: '#F04438' }}
+                                    buttonStyle={styles.chipButton}
+                                />
+                                <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
                                 <Text style={styles.submitDate}>Submitted on {item.submit_date}</Text>
                             </Card>
                         ))}
@@ -64,6 +78,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 0
     },
+    chipButton: { backgroundColor: '#FEE4E2', borderStyle: 'solid', borderColor: '#F04438', padding: 0, paddingRight: 20 },
     date: {
         color: '#099057',
         fontWeight: 'bold',
@@ -75,11 +90,6 @@ const styles = StyleSheet.create({
     heading: {
         fontSize: 14,
         fontWeight: 'bold'
-    },
-    headerRight: {
-        display: 'flex',
-        flexDirection: 'row',
-        marginTop: 5,
     },
     image: {
         width: '100%',
@@ -94,6 +104,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 5
     },
+    imageIconTitle: { height: 30, width: 30, marginTop: 15 },
+    listItemAccordionContainer: { borderRadius: 20, paddingLeft: 0 },
+    listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 20 },
     province: {
         color: '#636363',
         marginVertical: 10
@@ -107,7 +120,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
         marginTop: 10,
-        marginHorizontal: 15
+        marginHorizontal: 15,
+        paddingTop: 10, 
+        paddingBottom: 0
     }
 });
 

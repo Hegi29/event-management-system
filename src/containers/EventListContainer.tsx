@@ -28,7 +28,7 @@ const EventListContainer = () => {
                         titleStyle={{ color: '#F04438' }}
                         buttonStyle={styles.chipButton}
                     />
-                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail}/>} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
+                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
                     <Text style={styles.submitDate}>Submitted on {item.submit_date}</Text>
                 </Card>
             ))}
@@ -37,11 +37,6 @@ const EventListContainer = () => {
 }
 
 const styles = StyleSheet.create({
-    container: { marginVertical: 5 },
-    province: {
-        color: '#636363',
-        marginVertical: 10
-    },
     button: {
         borderRadius: 8,
         marginVertical: 10
@@ -53,6 +48,7 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     chipButton: { backgroundColor: '#FEE4E2', borderStyle: 'solid', borderColor: '#F04438', padding: 0, paddingRight: 20 },
+    container: { marginVertical: 5 },
     date: {
         color: '#099057',
         fontWeight: 'bold',
@@ -83,13 +79,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 5
     },
-    title: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        marginBottom: 5,
-        marginTop: 10,
-        marginHorizontal: 0,
-        color: '#1a6fb2'
+    province: {
+        color: '#636363',
+        marginVertical: 10
     },
     searchField: {
         borderWidth: 1,
@@ -105,6 +97,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginHorizontal: 0,
         marginBottom: 20
+    },
+    title: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        marginTop: 10,
+        marginHorizontal: 0,
+        color: '#1a6fb2'
     }
 });
 

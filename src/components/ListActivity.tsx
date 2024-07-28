@@ -11,11 +11,12 @@ const ListActivity = () => {
     return (
         <Card containerStyle={styles.card}>
             <ListItem.Accordion
-                style={{ paddingLeft: 0 }}
-                containerStyle={{ borderRadius: 20, paddingLeft: 0 }}
+                containerStyle={styles.accordionContainer}
                 content={
-                    <ListItem.Content>
-                        <Text style={styles.title}>{TITLE_HOME_D}</Text>
+                    <ListItem.Content style={styles.listItemContentContainer}>
+                        <Text style={ styles.title }>
+                            {TITLE_HOME_D}
+                        </Text>
                     </ListItem.Content>
                 }
                 isExpanded={expanded}
@@ -40,6 +41,7 @@ const ListActivity = () => {
 }
 
 const styles = StyleSheet.create({
+    accordionContainer: { borderRadius: 20, paddingLeft: 0 },
     button: {
         borderRadius: 8,
         marginVertical: 10
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 20
     },
+    listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 10 },
     province: {
         color: '#636363',
         marginVertical: 10
@@ -88,7 +91,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 20,
         marginTop: 10,
-        marginHorizontal: 15
+        marginHorizontal: 15,
+        paddingTop: 10, 
+        paddingBottom: 0
     }
 });
 
