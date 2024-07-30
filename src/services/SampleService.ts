@@ -1,22 +1,14 @@
 import axios from 'axios';
 
-const baseUrl = 'https://reqres.in';
+axios.defaults.timeout = 5000;
 
-// Passing configuration object to axios
-// const fetchUser = async () => {
-//   const configurationObject = {
-//     method: 'get',
-//     url: `${baseUrl}/api/users/1`,
-//   };
-//   const response = await axios(configurationObject);
-//   console.log(response.data);
-// };
+const baseUrl = 'http://172.19.12.57:7132';
 
 // Invoking get method to perform a GET request
-const fetchUser = async () => {
-  const url = `${baseUrl}/api/users/1`;
+const GetVenueList = async () => {
+  const url = `${baseUrl}/Event/v1/Venue/GetVenueList`;
   const response = await axios.get(url);
   console.log(response.data);
 };
 
-export default fetchUser;
+export default GetVenueList;
