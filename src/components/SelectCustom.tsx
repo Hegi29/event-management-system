@@ -11,12 +11,12 @@ const listStatus = [
     { title: 'Review Complete' }
 ];
 
-const SelectCustom = () => {
+const SelectCustom = ({ setSelectedStatus }: any) => {
     return (
         <SelectDropdown
             data={listStatus}
-            onSelect={(selectedItem, index) => {
-                console.log(selectedItem, index);
+            onSelect={(selectedItem) => {
+                setSelectedStatus(selectedItem.title);
             }}
             renderButton={(selectedItem, isOpened) => {
                 return (

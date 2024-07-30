@@ -31,24 +31,24 @@ const ListActivity = () => {
                     />
                 }
             >
-                <ListItem containerStyle={{ paddingTop: 0 }}>
+                <ListItem containerStyle={styles.container}>
                     <ListItem.Content>
                         {ACTIVITY_LIST.map((item) => (
                             <View key={item.activityId}>
-                                <Avatar containerStyle={{ position: 'absolute' }}
+                                <Avatar containerStyle={styles.avatarContainer}
                                     size={32}
                                     rounded
                                     source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
                                 />
-                                <View style={{ display: 'flex', flexDirection: 'row', marginLeft: 40 }}>
-                                    <Text style={{ marginRight: 10, fontWeight: 'bold' }}>{item.userName}</Text>
+                                <View style={styles.containerCreated}>
+                                    <Text style={styles.username}>{item.userName}</Text>
                                     <Text>{item.createdAt}</Text>
                                 </View>
-                                <View style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', marginLeft: 40, marginBottom: item.activity ? 0 : 20 }}>
+                                <View style={{ ...styles.containerEvent, marginBottom: item.activity ? 0 : 20 }}>
                                     <Text>{item.type}</Text>
-                                    <Text style={{color: '#1072BA'}}>{item.eventName}</Text>
+                                    <Text style={styles.eventName}>{item.eventName}</Text>
                                 </View>
-                                 {item.activity && <Text style={{ marginLeft: 40, marginBottom: 20, padding: 10, borderWidth: 1, borderRadius: 10, marginTop: 5 }}>"{item.activity}"</Text>}
+                                {item.activity && <Text style={styles.activity}>"{item.activity}"</Text>}
                             </View>
                         ))}
                     </ListItem.Content>
@@ -59,7 +59,22 @@ const ListActivity = () => {
 }
 
 const styles = StyleSheet.create({
-    accordionContainer: { borderRadius: 20, paddingLeft: 0 },
+    accordionContainer: {
+        borderRadius: 20,
+        paddingLeft: 0
+    },
+    activity: {
+        marginLeft: 40,
+        marginBottom: 20,
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#EAECF0',
+        marginTop: 5
+    },
+    avatarContainer: {
+        position: 'absolute'
+    },
     button: {
         borderRadius: 8,
         marginVertical: 10
@@ -71,6 +86,20 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 0
     },
+    container: {
+        paddingTop: 0
+    },
+    containerCreated: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginLeft: 40
+    },
+    containerEvent: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        marginLeft: 40
+    },
     date: {
         color: '#099057',
         fontWeight: 'bold',
@@ -78,6 +107,9 @@ const styles = StyleSheet.create({
     },
     eventCard: {
         borderRadius: 13
+    },
+    eventName: {
+        color: '#1072BA'
     },
     heading: {
         fontSize: 14,
@@ -95,7 +127,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 20
     },
-    listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 10 },
+    listItemContentContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 10
+    },
     province: {
         color: '#636363',
         marginVertical: 10
@@ -112,6 +148,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
         paddingTop: 10,
         paddingBottom: 0
+    },
+    username: {
+        marginRight: 10,
+        fontWeight: 'bold'
     }
 });
 

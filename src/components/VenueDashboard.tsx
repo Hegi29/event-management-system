@@ -42,7 +42,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 0
     },
-    cardWrapper: { width: 130, height: 110 },
+    cardWrapper: {
+        width: 130,
+        height: 110
+    },
     cardWaiting: {
         backgroundColor: '#b1f1fd',
         borderRadius: 10,
@@ -78,7 +81,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap'
     },
     textCard: {
-        fontWeight: 'bold', paddingBottom: 20
+        fontWeight: 'bold',
+        paddingBottom: 20
     }
 });
 

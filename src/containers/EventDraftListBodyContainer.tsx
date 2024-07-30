@@ -3,13 +3,13 @@ import { StyleSheet } from "react-native";
 import { Card } from "@rneui/themed";
 
 import SearchContainer from "./SearchContainer";
-import EventDraftListContainer from "./EventDraftListContainer";
+import EventListContainer from "./EventListContainer";
 
-const EventDraftListBodyContainer = () => {
+const EventDraftListBodyContainer = ({ data, setSelectedStatus }: any) => {
     return (
         <Card containerStyle={styles.card}>
-            <SearchContainer title='event'/>
-            <EventDraftListContainer />
+            {data.data && <SearchContainer title='event' setSelectedStatus={setSelectedStatus} />}
+            {data.data && <EventListContainer data={data.data} />}
         </Card>
     )
 }

@@ -2,13 +2,13 @@ import { StyleSheet, View } from "react-native";
 
 import { Button, Card, Chip, Image, Text } from "@rneui/themed";
 
-import { EVENT_LIST } from "../constants";
 import { DetailEventImage } from "../assets/images";
+import { EVENT_LIST } from "../constants/mock";
 
 const EventDraftListContainer = () => {
     return (
         <View style={styles.container}>
-            {EVENT_LIST.map((item) => (
+            {/* {EVENT_LIST.map((item) => (
                 <Card key={item.eventId} containerStyle={styles.eventCard}>
                     <Image source={{ uri: item.images[0] }} resizeMode='cover' style={styles.image} />
                     <Text style={styles.heading}>{item.title}</Text>
@@ -31,13 +31,15 @@ const EventDraftListContainer = () => {
                     <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
                     <Text style={styles.submitDate}>Submitted on {item.submit_date}</Text>
                 </Card>
-            ))}
+            ))} */}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: { marginVertical: 5 },
+    container: { 
+        marginVertical: 5
+     },
     province: {
         color: '#636363',
         marginVertical: 10
@@ -52,7 +54,13 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 20
     },
-    chipButton: { backgroundColor: '#FEE4E2', borderStyle: 'solid', borderColor: '#F04438', padding: 0, paddingRight: 20 },
+    chipButton: { 
+        backgroundColor: '#FEE4E2', 
+        borderStyle: 'solid', 
+        borderColor: '#F04438', 
+        padding: 0, 
+        paddingRight: 20
+     },
     date: {
         color: '#099057',
         fontWeight: 'bold',

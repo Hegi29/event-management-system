@@ -4,12 +4,12 @@ import { StyleSheet, View, } from 'react-native';
 import { Divider, Input, Text, CheckBox, Button } from '@rneui/themed';
 import Modal from 'react-native-modal';
 
-const EventDetailTab = ({ index, setIndex, navigation, isDraft }: any) => {
+const EventDetailTab = ({ setIndex, isDraft }: any) => {
     const [selectedIndexEvent, setIndexEvent] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleClose = () => {
-        // navigation.navigate('Event');
+        
     }
 
     const handleNext = () => {

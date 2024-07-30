@@ -4,9 +4,13 @@ import { Card, Icon, Input, Text } from "@rneui/themed";
 
 import SelectCustom from "../components/SelectCustom";
 
-type SearchContainerProps = { title: string };
+type SearchContainerProps = { title: string, setSelectedStatus: any };
 
-const SearchContainer = ({ title }: SearchContainerProps) => {
+const SearchContainer = ({ title, setSelectedStatus }: SearchContainerProps) => {
+    const onChangeSearch = (value: any) => {
+
+    }
+
     return (
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>Search for {title}</Text>
@@ -19,10 +23,11 @@ const SearchContainer = ({ title }: SearchContainerProps) => {
                 />
             }
                 inputContainerStyle={styles.searchField}
+                onChangeText={value => onChangeSearch(value)}
             />
             <Text style={styles.title}>Status</Text>
-            <View style={{paddingHorizontal: 10}}>
-                <SelectCustom />
+            <View style={{ paddingHorizontal: 10 }}>
+                <SelectCustom setSelectedStatus={setSelectedStatus}/>
             </View>
         </Card>
     )
@@ -30,7 +35,9 @@ const SearchContainer = ({ title }: SearchContainerProps) => {
 
 const styles = StyleSheet.create({
     cardContainer: {
-        borderRadius: 10, padding: 0, paddingTop: 10,
+        borderRadius: 10, 
+        padding: 0, 
+        paddingTop: 10,
         height: 195
     },
     iconContainer: {
@@ -43,7 +50,9 @@ const styles = StyleSheet.create({
         marginBottom: -10
     },
     title: {
-        marginTop: 5, marginBottom: 0, paddingLeft: 10
+        marginTop: 5, 
+        marginBottom: 0, 
+        paddingLeft: 10
     }
 });
 

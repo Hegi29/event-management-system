@@ -6,7 +6,7 @@ import { Tab } from '@rneui/themed';
 import { CREATE_VENUE_TAB, EVENT_DETAIL_TAB_IDX } from '../constants';
 import { EnvironmentTab, HealthTab, SafetyTab, SecurityTab, VenueDetailTab } from './tabs';
 
-const CreateVenueTab = ({ isDraft }: any) => {
+const CreateVenueTab = () => {
     const [index, setIndex] = useState(EVENT_DETAIL_TAB_IDX);
 
     return (
@@ -65,21 +65,24 @@ const CreateVenueTab = ({ isDraft }: any) => {
                 // icon={{ name: 'home', type: 'material', color: '#1072BA' }}
                 />
             </Tab>
-            {index === CREATE_VENUE_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
-            {index === CREATE_VENUE_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
-            {index === CREATE_VENUE_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
-            {index === CREATE_VENUE_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
-            {index === CREATE_VENUE_TAB.ENVIRONMENT && <EnvironmentTab index={index} setIndex={setIndex} isDraft={isDraft} tipe="venue"/>}
+            {index === CREATE_VENUE_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} tipe="venue" />}
+            {index === CREATE_VENUE_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} tipe="venue" />}
+            {index === CREATE_VENUE_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} tipe="venue" />}
+            {index === CREATE_VENUE_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} tipe="venue" />}
+            {index === CREATE_VENUE_TAB.ENVIRONMENT && <EnvironmentTab index={index} setIndex={setIndex} tipe="venue" />}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     tabItemActive: {
-        fontSize: 17, fontWeight: 'bold', color: 'black'
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'black'
     },
     tabItemInactive: {
-        fontSize: 17, color: 'grey'
+        fontSize: 17,
+        color: 'grey'
     }
 });
 

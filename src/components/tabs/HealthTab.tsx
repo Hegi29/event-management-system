@@ -4,11 +4,11 @@ import { View } from "react-native";
 import Modal from "react-native-modal";
 import { Button, Card, CheckBox, Divider, Icon, ListItem, Text } from "@rneui/themed";
 
-const HealthTab = ({ index, setIndex, isDraft, tipe }: any) => {
+const HealthTab = ({ setIndex, isDraft, tipe }: any) => {
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const handleNext = ({ type }: any) => {
+    const handleNext = () => {
         setIndex(tipe !== "venue" ? 3 : 2);
     }
 

@@ -39,8 +39,6 @@ const Datepicker = ({ setSelectedDate, toggleModal }: any) => {
             />
 
             <View>
-                {/* <Text>SELECTED START DATE:{startDate}</Text>
-                <Text>SELECTED END DATE:{endDate}</Text> */}
                 <Button title="OK" onPress={handleOK} buttonStyle={{ borderBottomStartRadius: 10, borderBottomEndRadius: 10 }} />
             </View>
         </View>

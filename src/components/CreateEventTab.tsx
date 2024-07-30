@@ -15,14 +15,8 @@ const CreateEventTab = ({ navigation, isDraft }: any) => {
                 scrollable={true}
                 value={index}
                 onChange={(e) => setIndex(e)}
-                indicatorStyle={{
-                    backgroundColor: '#1072BA',
-                    height: 3
-                }}
-                containerStyle={{
-                    backgroundColor: 'white',
-                    borderRadius: 20
-                }}
+                indicatorStyle={styles.indicator}
+                containerStyle={styles.tabContainer}
             >
                 <Tab.Item
                     title="1. Event Detail"
@@ -74,7 +68,7 @@ const CreateEventTab = ({ navigation, isDraft }: any) => {
                 />
             </Tab>
             {index === CREATE_EVENT_TAB.EVENT_DETAIL && <EventDetailTab index={index} setIndex={setIndex} navigation={navigation} isDraft={isDraft} />}
-            {index === CREATE_EVENT_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} isDraft={isDraft} />}
+            {index === CREATE_EVENT_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} isDraft={isDraft} tipe='venue' />}
             {index === CREATE_EVENT_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} isDraft={isDraft} />}
             {index === CREATE_EVENT_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} isDraft={isDraft} />}
             {index === CREATE_EVENT_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} isDraft={isDraft} />}
@@ -84,11 +78,22 @@ const CreateEventTab = ({ navigation, isDraft }: any) => {
 };
 
 const styles = StyleSheet.create({
+    indicator: {
+        backgroundColor: '#1072BA',
+        height: 3
+    },
+    tabContainer: {
+        backgroundColor: 'white',
+        borderRadius: 20
+    },
     tabItemActive: {
-        fontSize: 17, fontWeight: 'bold', color: 'black'
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'black'
     },
     tabItemInactive: {
-        fontSize: 17, color: 'grey'
+        fontSize: 17,
+        color: 'grey'
     }
 });
 

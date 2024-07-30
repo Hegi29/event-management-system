@@ -14,7 +14,9 @@ import SearchContainer from "./SearchContainer";
 import UsersBodyContainer from "./UsersBodyContainer";
 import UsersHeadContainer from "./UsersHeadContainer";
 import VenueListBodyContainer from "./VenueListBodyContainer";
+import VenueListContainer from "./VenueListContainer";
 import VenueListHeadContainer from "./VenueListHeadContainer";
+import WelcomeContainer from "./WelcomeContainer";
 
 export {
     CreateEventBodyContainer,
@@ -32,6 +34,8 @@ export {
     SearchContainer,
     UsersBodyContainer,
     UsersHeadContainer,
+    VenueListContainer,
     VenueListBodyContainer,
-    VenueListHeadContainer
+    VenueListHeadContainer,
+    WelcomeContainer
 }

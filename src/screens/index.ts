@@ -19,5 +19,5 @@ export {
     Support,
     Setting,
     Users,
-    Venue,
+    Venue
 }

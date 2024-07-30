@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 
 import { Card, Image, Text } from "@rneui/themed";
+
 import { RequestRevisionImage, ReviewCompleteImage, UnderReviewImage, WaitingReviewImage } from "../assets/images";
 
 const EventDashboard = () => {
@@ -48,7 +49,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 0
     },
-    cardWrapper: { width: 130, height: 110 },
+    cardWrapper: { 
+        width: 130, 
+        height: 110 
+    },
     cardWaiting: {
         backgroundColor: '#b1f1fd',
         borderRadius: 10,
@@ -85,7 +89,8 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     textCard: {
-        fontWeight: 'bold', paddingBottom: 20
+        fontWeight: 'bold', 
+        paddingBottom: 20
     }
 });
 

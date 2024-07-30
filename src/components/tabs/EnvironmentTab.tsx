@@ -4,7 +4,7 @@ import { View } from "react-native"
 import Modal from "react-native-modal";
 import { Button, Card, CheckBox, Divider, Icon, ListItem, Text } from "@rneui/themed";
 
-const EnvironmentTab = ({ index, setIndex, isDraft, tipe }: any) => {
+const EnvironmentTab = ({ setIndex, isDraft, tipe }: any) => {
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 

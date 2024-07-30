@@ -13,7 +13,8 @@ const CreateEventHeadContainer = () => {
 
 const styles = StyleSheet.create({
     card: {
-        borderRadius: 15, paddingBottom: 5
+        borderRadius: 15, 
+        paddingBottom: 5
     },
     title: {
         fontSize: 30,

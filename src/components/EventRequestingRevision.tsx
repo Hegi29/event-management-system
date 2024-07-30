@@ -4,7 +4,8 @@ import { StyleSheet } from "react-native";
 import { Button, Card, Chip, Icon, Image, ListItem, Text } from "@rneui/themed";
 
 import { DetailEventImage, EventRequestingRevisionImage } from "../assets/images";
-import { EVENT_LIST, TITLE_HOME_A } from "../constants";
+import { EVENT_LIST } from "../constants/mock";
+import { TITLE_HOME_A } from "../constants";
 
 const EventRequestingRevision = () => {
     const [expanded, setExpanded] = useState(false);
@@ -37,11 +38,11 @@ const EventRequestingRevision = () => {
                     <ListItem.Content>
                         {EVENT_LIST.map((item) => (
                             <Card key={item.eventId} containerStyle={styles.eventCard}>
-                                <Image source={{ uri: item.images[0] }} resizeMode='cover' style={styles.image} />
-                                <Text style={styles.heading}>{item.title}</Text>
+                                <Image source={{ uri: item.venue.images.data[0] }} resizeMode='cover' style={styles.image} />
+                                <Text style={styles.heading}>{item.activityName}</Text>
                                 <Text style={styles.province}>{item.venueName}</Text>
-                                <Text style={styles.date}>{item.date}</Text>
-                                <Text style={styles.province}>{item.province}</Text>
+                                <Text style={styles.date}>{item.activityStartDate} - {item.activityStartDate}</Text>
+                                <Text style={styles.province}>{item.venue.province}</Text>
                                 <Chip
                                     title={item.status}
                                     icon={{
@@ -56,7 +57,7 @@ const EventRequestingRevision = () => {
                                     buttonStyle={styles.chipButton}
                                 />
                                 <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
-                                <Text style={styles.submitDate}>Submitted on {item.submit_date}</Text>
+                                <Text style={styles.submitDate}>Submitted on {item.created}</Text>
                             </Card>
                         ))}
                     </ListItem.Content>
@@ -78,7 +79,13 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 0
     },
-    chipButton: { backgroundColor: '#FEE4E2', borderStyle: 'solid', borderColor: '#F04438', padding: 0, paddingRight: 20 },
+    chipButton: {
+        backgroundColor: '#FEE4E2',
+        borderStyle: 'solid',
+        borderColor: '#F04438',
+        padding: 0,
+        paddingRight: 20
+    },
     date: {
         color: '#099057',
         fontWeight: 'bold',
@@ -106,9 +113,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 5
     },
-    imageIconTitle: { height: 30, width: 30, marginTop: 15 },
-    listItemAccordionContainer: { borderRadius: 20, paddingLeft: 0 },
-    listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 20 },
+    imageIconTitle: {
+        height: 30,
+        width: 30,
+        marginTop: 15
+    },
+    listItemAccordionContainer: {
+        borderRadius: 20,
+        paddingLeft: 0
+    },
+    listItemContentContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 20
+    },
     province: {
         color: '#636363',
         marginVertical: 10

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { Card, Text } from "@rneui/themed"
+import { Card, Text } from "@rneui/themed";
 
 const CreateVenueHeadContainer = () => {
     return (
@@ -12,7 +12,10 @@ const CreateVenueHeadContainer = () => {
 }
 
 const styles = StyleSheet.create({
-    cardContainer: { borderRadius: 15, paddingBottom: 5 },
+    cardContainer: { 
+        borderRadius: 15, 
+        paddingBottom: 5 
+    },
     title: {
         fontSize: 30,
         fontWeight: 'bold',

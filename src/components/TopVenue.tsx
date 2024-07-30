@@ -4,7 +4,8 @@ import { StyleSheet, View } from "react-native";
 import { Card, Chip, Icon, Image, ListItem, Text } from "@rneui/themed";
 
 import { CalendarImage, CheckedImage, PhoneImage, TopVenueImage } from "../assets/images";
-import { TITLE_HOME_B, TOP_VENUE_LIST } from "../constants";
+import { TOP_VENUE_LIST } from "../constants/mock";
+import { TITLE_HOME_B } from "../constants";
 
 const TopVenue = () => {
     const [expanded, setExpanded] = useState(false);
@@ -79,7 +80,7 @@ const TopVenue = () => {
                                     type='outline'
                                     containerStyle={{ paddingHorizontal: 0, marginBottom: 10, marginTop: 30 }}
                                     titleStyle={{ color: '#fff' }}
-                                    buttonStyle={{backgroundColor: '#1072BA', borderStyle: 'solid'}}
+                                    buttonStyle={{ backgroundColor: '#1072BA', borderStyle: 'solid' }}
                                 />
                             </Card>
                         ))}
@@ -102,7 +103,11 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 0
     },
-    chipButton: { backgroundColor: '#ABEFC6', borderStyle: 'solid', borderColor: '#067647' },
+    chipButton: {
+        backgroundColor: '#ABEFC6',
+        borderStyle: 'solid',
+        borderColor: '#067647'
+    },
     date: {
         color: '#099057',
         fontWeight: 'bold',
@@ -130,9 +135,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 5
     },
-    imageIconTitle: { height: 30, width: 30, marginTop: 15 },
-    listItemAccordionContainer: { borderRadius: 20, paddingLeft: 0 },
-    listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 20 },
+    imageIconTitle: {
+        height: 30,
+        width: 30,
+        marginTop: 15
+    },
+    listItemAccordionContainer: {
+        borderRadius: 20,
+        paddingLeft: 0
+    },
+    listItemContentContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 20
+    },
     province: {
         color: '#636363',
         marginVertical: 5

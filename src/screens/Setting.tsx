@@ -6,7 +6,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 const Setting: React.FunctionComponent<any> = () => {
   return (
     <ScrollView>
-      <Card containerStyle={{ borderRadius: 10, paddingBottom: 30 }}>
+      <Card containerStyle={styles.container}>
         <Text style={styles.title}>Setting</Text>
       </Card>
     </ScrollView>
@@ -14,6 +14,9 @@ const Setting: React.FunctionComponent<any> = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    borderRadius: 10, paddingBottom: 30
+  },
   title: {
     fontSize: 30,
     fontWeight: 'bold',

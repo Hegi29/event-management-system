@@ -4,13 +4,10 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Card, Icon, ListItem, Text } from "@rneui/themed";
 import Modal from "react-native-modal";
 
-import { COORDINATION_MEETING_LIST, TITLE_HOME_C } from "../constants";
+import { COORDINATION_MEETING_LIST } from "../constants/mock";
+import { getMonthName } from "../utils/Date";
+import { TITLE_HOME_C } from "../constants";
 import Datepicker from "./Datepicker";
-
-const getMonthName = (value: any) => {
-    const formatter = new Intl.DateTimeFormat('id', { month: 'long' });
-    return formatter.format(value);
-}
 
 const UpcomingEvent = () => {
     const [expanded, setExpanded] = useState(false);
@@ -79,7 +76,10 @@ const UpcomingEvent = () => {
 }
 
 const styles = StyleSheet.create({
-    accordionContainer: { borderRadius: 20, paddingLeft: 0 },
+    accordionContainer: {
+        borderRadius: 20,
+        paddingLeft: 0
+    },
     button: {
         borderRadius: 8,
         marginVertical: 10
@@ -94,7 +94,12 @@ const styles = StyleSheet.create({
     date: {
         marginTop: 10
     },
-    datepickerContainer: { marginTop: 100, display: 'flex', flexWrap: 'wrap', marginLeft: -20 },
+    datepickerContainer: {
+        marginTop: 100,
+        display: 'flex',
+        flexWrap: 'wrap',
+        marginLeft: -20
+    },
     eventCard: {
         borderRadius: 13,
         marginLeft: 0,
@@ -117,7 +122,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 20
     },
-    listItemContentContainer: { flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 10 },
+    listItemContentContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 10
+    },
     eventName: {
         fontWeight: 'bold'
     },

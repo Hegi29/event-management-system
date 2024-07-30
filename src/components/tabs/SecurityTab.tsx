@@ -4,7 +4,7 @@ import { View } from "react-native";
 import Modal from "react-native-modal";
 import { Button, Card, CheckBox, Divider, Icon, ListItem, Text } from "@rneui/themed";
 
-const SecurityTab = ({ index, setIndex, isDraft, tipe }: any) => {
+const SecurityTab = ({ setIndex, isDraft, tipe }: any) => {
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -12,7 +12,7 @@ const SecurityTab = ({ index, setIndex, isDraft, tipe }: any) => {
         setIndex(tipe !== 'venue' ? 2 : 1);
     }
 
-    const handleNext = ({ type }: any) => {
+    const handleNext = () => {
         setIndex(tipe !== "venue" ? 4 : 3);
     }
 

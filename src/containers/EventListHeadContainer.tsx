@@ -22,10 +22,16 @@ const EventListHeadContainer = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
     buttonAdd: {
-        width: 180, borderRadius: 10, borderColor: '#000', backgroundColor: '#0D5B95'
+        width: 180, 
+        borderRadius: 10, 
+        borderColor: '#000', 
+        backgroundColor: '#0D5B95'
     },
     buttonExport: {
-        width: 145, marginRight: 5, borderRadius: 10, borderColor: '#000'
+        width: 145, 
+        marginRight: 5, 
+        borderRadius: 10, 
+        borderColor: '#000'
     },
     buttonWrapper: {
         flexDirection: 'row',
@@ -34,7 +40,8 @@ const styles = StyleSheet.create({
         padding: 0
     },
     cardContainer: {
-        borderRadius: 10, paddingBottom: 20
+        borderRadius: 10, 
+        paddingBottom: 20
     },
     image: {
         width: 20,

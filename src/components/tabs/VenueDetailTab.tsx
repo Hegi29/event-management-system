@@ -6,12 +6,12 @@ import Modal from 'react-native-modal';
 
 import DividerTextMiddle from '../DividerTextMiddle';
 
-type VenueDetailTabProps = { index: number, setIndex: any, isDraft: boolean, tipe: string };
+type VenueDetailTabProps = { index: number, setIndex: any, isDraft?: boolean, tipe: string };
 
-const VenueDetailTab = ({ index, setIndex, isDraft, tipe }: VenueDetailTabProps) => {
+const VenueDetailTab = ({ setIndex, isDraft, tipe }: VenueDetailTabProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const handleNext = ({ type }: any) => {
+    const handleNext = () => {
         setIndex(tipe !== 'venue' ? 2 : 1);
     }
 
