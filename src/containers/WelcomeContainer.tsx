@@ -1,13 +1,16 @@
 import { StyleSheet } from "react-native";
 
 import { Button, Card, Icon, Text } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
 
-const WelcomeContainer = ({ navigation }: any) => {
+const WelcomeContainer = () => {
+    const navigation = useNavigation();
+
     return (
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>Welcome back, Olivia</Text>
             <Text>Track, manage and forecast your event</Text>
-            <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent')} icon={<Icon name="add" size={24} color="#fff" />} />
+            <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
         </Card>
     )
 }

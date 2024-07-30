@@ -1,19 +1,22 @@
 import { StyleSheet, View } from "react-native";
 
 import { Button, Card, Icon, Image, Text } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
 
 import { ExportImage } from "../assets/images";
 import { SUBTITLE_EVENT, TITLE_EVENT } from "../constants";
 import { EventDashboard } from "../components";
 
-const EventListHeadContainer = ({ navigation }: any) => {
+const EventListHeadContainer = () => {
+    const navigation = useNavigation();
+
     return (
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>{TITLE_EVENT}</Text>
             <Text style={styles.subtitle}>{SUBTITLE_EVENT}</Text>
             <View style={styles.buttonWrapper}>
                 <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-                <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent')} icon={<Icon name="add" size={24} color="#fff" />} />
+                <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
             </View>
             <EventDashboard />
         </Card>

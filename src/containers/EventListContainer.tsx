@@ -17,11 +17,11 @@ const EventListContainer = ({ data }: any) => {
         <View style={styles.container}>
             {data?.map((item: any) => (
                 <Card key={item.eventId} containerStyle={styles.eventCard}>
-                    <Image source={{ uri: item.venue.images[0].data }} resizeMode='cover' style={styles.image} />
+                    <Image source={{ uri: item.venue?.images[0]?.data }} resizeMode='cover' style={styles.image} />
                     <Text style={styles.heading}>{item.activityName}</Text>
-                    <Text style={styles.province}>{item.venue.venueName}</Text>
+                    <Text style={styles.province}>{item.venue?.venueName}</Text>
                     <Text style={styles.date}>{formatEventDate(item.activityStartDate,item.activityEndDate)}</Text>
-                    <Text style={styles.province}>{item.venue.province}</Text>
+                    <Text style={styles.province}>{item.venue?.province}</Text>
                     <Chip
                         title={item.status}
                         icon={iconOptions}

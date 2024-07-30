@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { GetEventDetailList } from '../services/EventDetail';
 import { EventListBodyContainer, EventListHeadContainer } from '../containers';
 
-const Event: React.FunctionComponent<any> = ({ navigation }) => {
+const Event: React.FunctionComponent<any> = () => {
   const [data, setData] = useState({}) as any;
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -37,7 +37,7 @@ const Event: React.FunctionComponent<any> = ({ navigation }) => {
 
   return (
     <ScrollView>
-      <EventListHeadContainer navigation={navigation} />
+      <EventListHeadContainer />
       {isLoaded && <EventListBodyContainer data={data} setSelectedStatus={setSelectedStatus} />}
     </ScrollView>
   );

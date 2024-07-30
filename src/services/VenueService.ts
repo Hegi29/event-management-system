@@ -33,10 +33,13 @@ const UpdateAllVenueExpiredStatus = async (data: any) => {
 };
 
 const GetVenueList = async () => {
-    const url = `${BASE_URL}/Venue/GetVenueList`;
-    const response = await axios.get(url);
-    console.log(response.data);
-    return response;
+    try {
+        const url = `${BASE_URL}/Venue/GetVenueList`;
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
 };
 
 export {

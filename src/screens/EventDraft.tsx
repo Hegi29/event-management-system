@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { EventDraftListBodyContainer, EventDraftListHeadContainer } from '../containers';
 import { GetEventDetailList } from '../services/EventDetail';
 
-const Event: React.FunctionComponent<any> = ({ navigation }) => {
+const Event: React.FunctionComponent<any> = () => {
   const [data, setData] = useState({}) as any;
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -13,14 +13,14 @@ const Event: React.FunctionComponent<any> = ({ navigation }) => {
   const params = {
     isDraft: true,
     status: selectedStatus,
-    // pageNumber: 1,
+    pageNumber: 1,
     pageSize: 10,
     email: ''
   };
 
-  const fetchEventList = async () => {
+  const fetchEventList = async (param: any) => {
     try {
-      const response = await GetEventDetailList(params);
+      const response = await GetEventDetailList(param);
       if (response) {
         setData(response);
         setIsLoaded(true);
@@ -32,12 +32,12 @@ const Event: React.FunctionComponent<any> = ({ navigation }) => {
   }
 
   useEffect(() => {
-    fetchEventList();
+    fetchEventList(params);
   }, [selectedStatus]);
   
   return (
     <ScrollView>
-      <EventDraftListHeadContainer navigation={navigation} />
+      <EventDraftListHeadContainer />
       {isLoaded && <EventDraftListBodyContainer data={data} setSelectedStatus={setSelectedStatus} />}
     </ScrollView>
   );

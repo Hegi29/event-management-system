@@ -29,6 +29,7 @@ const GetEventDetailList = async (param: any) => {
     const params = {
         isDraft: param.isDraft,
         status: param.status,
+        pageNumber: param.pageNumber,
         pageSize: param.pageSize,
         email: param.email
     };

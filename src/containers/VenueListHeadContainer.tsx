@@ -1,19 +1,22 @@
 import { StyleSheet, View } from "react-native";
 
 import { Button, Card, Icon, Image, Text } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
 
 import { ExportImage } from "../assets/images";
 import { SUBTITLE_EVENT, TITLE_VENUE } from "../constants";
 import { VenueDashboard } from "../components";
 
-const VenueListHeadContainer = ({ navigation }: any) => {
+const VenueListHeadContainer = () => {
+    const navigation = useNavigation();
+
     return (
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>{TITLE_VENUE}</Text>
             <Text style={styles.subtitle}>{SUBTITLE_EVENT}</Text>
             <View style={styles.buttonWrapper}>
-            <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-                <Button title="Add New Venue" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateVenue')} icon={<Icon name="add" size={24} color="#fff" />} />
+                <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
+                <Button title="Add New Venue" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateVenue' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
             </View>
             <VenueDashboard />
         </Card>
@@ -22,15 +25,15 @@ const VenueListHeadContainer = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
     buttonAdd: {
-        width: 180, 
-        borderRadius: 10, 
-        borderColor: '#000', 
+        width: 180,
+        borderRadius: 10,
+        borderColor: '#000',
         backgroundColor: '#0D5B95'
     },
     buttonExport: {
-        width: 145, 
-        marginRight: 5, 
-        borderRadius: 10, 
+        width: 145,
+        marginRight: 5,
+        borderRadius: 10,
         borderColor: '#000'
     },
     buttonWrapper: {
@@ -40,7 +43,7 @@ const styles = StyleSheet.create({
         padding: 0
     },
     cardContainer: {
-        borderRadius: 10, 
+        borderRadius: 10,
         paddingBottom: 20
     },
     image: {
