@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 
 import { ScrollView } from 'react-native-gesture-handler';
+import axios from 'axios';
 
 import { VenueListBodyContainer, VenueListHeadContainer } from '../containers';
-import { GetVenueList } from '../services/VenueService';
+import { GetVenueByKeyword, GetVenueList, GetVenueStatusList } from '../services/VenueService';
 import { ModalError } from '../components';
 
 const Venue: React.FunctionComponent<any> = () => {
-  const [data, setData] = useState({}) as any;
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [data, setData] = useState([]) as any;
+  const [dashboardData, setDashboardData] = useState([]) as any;
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedSearch, setSelectedSearch] = useState('');
+
   const [isError, setIsError] = useState(false);
   const [errorData, setErrorData] = useState({}) as any;
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -18,42 +21,70 @@ const Venue: React.FunctionComponent<any> = () => {
     setIsModalVisible(false);
   }
 
-  // const params = {
-  //   isDraft: false,
-  //   status: selectedStatus,
-  //   // pageNumber: 1,
-  //   pageSize: 10,
-  //   email: ''
-  // };
+  const params = {
+    isDraft: false,
+    status: selectedStatus === 'All Status' ? '' : selectedStatus,
+    pageNumber: 1,
+    pageSize: 10
+  };
+
+  const fetchVenueDashboard = async () => {
+    try {
+      const response = await GetVenueStatusList('');
+      if (response.status === axios.HttpStatusCode.Ok) {
+        setDashboardData(response.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const fetchVenueList = async () => {
-    const response = await GetVenueList();
-    if (response?.status === 200) {
+    const response = await GetVenueList(params);
+    if (response?.status === axios.HttpStatusCode.Ok) {
       setData(response.data);
-      setIsLoaded(true);
       setIsError(false);
       setErrorData({});
     } else {
       setIsError(true);
       setIsModalVisible(true);
       setErrorData(response);
-      setIsLoaded(false);
+    }
+  }
+
+  const fetchVenueListByKeyword = async () => {
+    const response = await GetVenueByKeyword(selectedSearch);
+    if (response?.status === axios.HttpStatusCode.Ok) {
+      setData(response.data);
+      setIsError(false);
+      setErrorData({});
+    } else {
+      setIsError(true);
+      setIsModalVisible(true);
+      setErrorData(response);
     }
   }
 
   useEffect(() => {
+    fetchVenueDashboard();
     fetchVenueList();
   }, []);
 
   useEffect(() => {
+    fetchVenueDashboard();
     fetchVenueList();
   }, [selectedStatus]);
+
+  useEffect(() => {
+    fetchVenueDashboard();
+    fetchVenueListByKeyword();
+  }, [selectedSearch]);
 
   return (
     <ScrollView>
       {isError && <ModalError isModalVisible={isModalVisible} handleOk={handleOk} statusCode={errorData.status} message={errorData.message} />}
-      <VenueListHeadContainer />
-      {isLoaded && <VenueListBodyContainer data={data} setSelectedStatus={setSelectedStatus} />}
+      <VenueListHeadContainer dashboardData={dashboardData} />
+      <VenueListBodyContainer data={data} setSelectedSearch={setSelectedSearch} setSelectedStatus={setSelectedStatus} />
     </ScrollView>
   );
 };

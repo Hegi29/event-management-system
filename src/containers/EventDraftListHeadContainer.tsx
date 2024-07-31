@@ -5,35 +5,39 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ExportImage } from "../assets/images";
 import { SUBTITLE_EVENT, TITLE_EVENT_DRAFT } from "../constants";
-import { EventDashboard } from "../components";
 
-const EventDraftListHeadContainer = () => {
+const ActionButton = () => {
     const navigation = useNavigation();
 
+    return (
+        <View style={styles.buttonWrapper}>
+            <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
+            <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+        </View>
+    )
+}
+
+const EventDraftListHeadContainer = () => {
     return (
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>{TITLE_EVENT_DRAFT}</Text>
             <Text style={styles.subtitle}>{SUBTITLE_EVENT}</Text>
-            <View style={styles.buttonWrapper}>
-                <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-                <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
-            </View>
-            <EventDashboard />
+            <ActionButton />
         </Card>
     )
 }
 
 const styles = StyleSheet.create({
     buttonAdd: {
-        width: 180, 
-        borderRadius: 10, 
-        borderColor: '#000', 
+        width: 180,
+        borderRadius: 10,
+        borderColor: '#000',
         backgroundColor: '#0D5B95'
     },
     buttonExport: {
-        width: 145, 
-        marginRight: 5, 
-        borderRadius: 10, 
+        width: 145,
+        marginRight: 5,
+        borderRadius: 10,
         borderColor: '#000'
     },
     buttonWrapper: {
@@ -43,7 +47,7 @@ const styles = StyleSheet.create({
         padding: 0
     },
     cardContainer: {
-        borderRadius: 10, 
+        borderRadius: 10,
         paddingBottom: 20
     },
     image: {

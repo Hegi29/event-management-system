@@ -7,6 +7,82 @@ import { CalendarImage, CheckedImage, PhoneImage, TopVenueImage } from "../asset
 import { TOP_VENUE_LIST } from "../constants/mock";
 import { TITLE_HOME_B } from "../constants";
 
+const ListItemHeaderContent = () => {
+    return (
+        <>
+            <Image source={TopVenueImage} style={styles.imageIconTitle} />
+            <Text style={styles.title}>
+                {TITLE_HOME_B}
+            </Text>
+        </>
+    )
+}
+
+const IconChevron = () => {
+    return (
+        <Icon
+            name='chevron-down'
+            type="material-community"
+            color='black'
+        />
+    )
+}
+
+const ListItemBodyContent = () => {
+    return (
+        <>
+            {TOP_VENUE_LIST.map((item) => (
+                <Card key={item.venueId} containerStyle={styles.eventCard}>
+                    <Image source={{ uri: item.images[0] }} resizeMode='cover' style={styles.image} />
+                    <Text style={styles.heading}>{item.venueName}</Text>
+                    <Text style={styles.province}>{item.venueAddress}</Text>
+
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', marginRight: 10 }}>
+                            <Image source={PhoneImage} style={{ height: 20, width: 20, marginRight: 5 }} />
+                            <Text style={styles.province}>{item.phoneNumber}</Text>
+                        </View>
+
+                        <View style={{ flexDirection: 'row' }}>
+                            <Image source={CalendarImage} style={{ height: 20, width: 20, marginRight: 5 }} />
+                            <Text style={styles.province}>{item.totalUsed} total used</Text>
+                        </View>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                        <Image source={CheckedImage} style={{ height: 20, width: 20, marginRight: 5 }} />
+                        <Text style={styles.province}>Verified on {item.verifiedDate}</Text>
+                    </View>
+
+                    {item.badges.map((items) => (
+                        <Chip
+                            key={items}
+                            title={items}
+                            icon={{
+                                name: 'circle',
+                                type: 'font-awesome',
+                                size: 10,
+                                color: '#067647'
+                            }}
+                            type='outline'
+                            containerStyle={{ paddingHorizontal: 0, marginBottom: 10 }}
+                            titleStyle={{ color: '#067647' }}
+                            buttonStyle={styles.chipButton}
+                        />
+                    ))}
+                    <Chip
+                        title='10 events were held here'
+                        type='outline'
+                        containerStyle={{ paddingHorizontal: 0, marginBottom: 10, marginTop: 30 }}
+                        titleStyle={{ color: '#fff' }}
+                        buttonStyle={{ backgroundColor: '#1072BA', borderStyle: 'solid' }}
+                    />
+                </Card>
+            ))}
+        </>
+    )
+}
+
 const TopVenue = () => {
     const [expanded, setExpanded] = useState(false);
 
@@ -16,74 +92,18 @@ const TopVenue = () => {
                 containerStyle={styles.listItemAccordionContainer}
                 content={
                     <ListItem.Content style={styles.listItemContentContainer}>
-                        <Image source={TopVenueImage} style={styles.imageIconTitle} />
-                        <Text style={styles.title}>
-                            {TITLE_HOME_B}
-                        </Text>
+                        <ListItemHeaderContent />
                     </ListItem.Content>
                 }
                 isExpanded={expanded}
                 onPress={() => {
                     setExpanded(!expanded);
                 }}
-                icon={
-                    <Icon
-                        name='chevron-down'
-                        type="material-community"
-                        color='black'
-                    />
-                }
+                icon={<IconChevron />}
             >
-                <ListItem containerStyle={{ paddingTop: 0 }}>
+                <ListItem containerStyle={styles.listItemBodyContainer}>
                     <ListItem.Content>
-                        {TOP_VENUE_LIST.map((item) => (
-                            <Card key={item.venueId} containerStyle={styles.eventCard}>
-                                <Image source={{ uri: item.images[0] }} resizeMode='cover' style={styles.image} />
-                                <Text style={styles.heading}>{item.venueName}</Text>
-                                <Text style={styles.province}>{item.venueAddress}</Text>
-
-                                <View style={{ flexDirection: 'row' }}>
-                                    <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                                        <Image source={PhoneImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                                        <Text style={styles.province}>{item.phoneNumber}</Text>
-                                    </View>
-
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Image source={CalendarImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                                        <Text style={styles.province}>{item.totalUsed} total used</Text>
-                                    </View>
-                                </View>
-
-                                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                                    <Image source={CheckedImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                                    <Text style={styles.province}>Verified on {item.verifiedDate}</Text>
-                                </View>
-
-                                {item.badges.map((items) => (
-                                    <Chip
-                                        key={items}
-                                        title={items}
-                                        icon={{
-                                            name: 'circle',
-                                            type: 'font-awesome',
-                                            size: 10,
-                                            color: '#067647'
-                                        }}
-                                        type='outline'
-                                        containerStyle={{ paddingHorizontal: 0, marginBottom: 10 }}
-                                        titleStyle={{ color: '#067647' }}
-                                        buttonStyle={styles.chipButton}
-                                    />
-                                ))}
-                                <Chip
-                                    title='10 events were held here'
-                                    type='outline'
-                                    containerStyle={{ paddingHorizontal: 0, marginBottom: 10, marginTop: 30 }}
-                                    titleStyle={{ color: '#fff' }}
-                                    buttonStyle={{ backgroundColor: '#1072BA', borderStyle: 'solid' }}
-                                />
-                            </Card>
-                        ))}
+                        <ListItemBodyContent />
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>
@@ -143,6 +163,9 @@ const styles = StyleSheet.create({
     listItemAccordionContainer: {
         borderRadius: 20,
         paddingLeft: 0
+    },
+    listItemBodyContainer: {
+        paddingTop: 0
     },
     listItemContentContainer: {
         flexDirection: 'row',

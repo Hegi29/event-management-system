@@ -12,10 +12,12 @@ const CreateVenue = async (data: any) => {
 };
 
 const GetVenueByKeyword = async (data: any) => {
+    const param = {
+        "keyword": data
+    };
     const url = `${BASE_URL}/Venue/GetVenueByKeyword`;
-    const response = await axios.post(url, data);
-    console.log(response.data);
-    return response;
+    const response = await axios.post(url, param);
+    return response.data;
 };
 
 const UpdateVenue = async (data: any) => {
@@ -32,9 +34,19 @@ const UpdateAllVenueExpiredStatus = async (data: any) => {
     return response;
 };
 
-const GetVenueList = async () => {
+const GetVenueList = async (param: any) => {
     try {
-        const url = `${BASE_URL}/Venue/GetVenueList`;
+        const url = `${BASE_URL}/Venue/GetVenueList?isDraft=${param.isDraft}&status=${param.status}&pageSize=${param.pageSize}&pageNumber=${param.pageNumber}`;
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const GetVenueStatusList = async (param: any) => {
+    try {
+        const url = `${BASE_URL}/Venue/GetAllVenueStatus`;
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
@@ -45,6 +57,7 @@ const GetVenueList = async () => {
 export {
     CreateVenue,
     GetVenueByKeyword,
+    GetVenueStatusList,
     UpdateVenue,
     UpdateAllVenueExpiredStatus,
     GetVenueList

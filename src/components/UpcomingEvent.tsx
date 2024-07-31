@@ -9,64 +9,89 @@ import { getMonthName } from "../utils/Date";
 import { TITLE_HOME_C } from "../constants";
 import Datepicker from "./Datepicker";
 
-const UpcomingEvent = () => {
+const RenderTitleDatepicker = ({ selectedDate }: any) => {
+    return (
+        <Text style={styles.titleDatepicker}>{getMonthName(selectedDate.startDate)} {selectedDate.startDate?.getDate()}, {selectedDate.startDate?.getFullYear()} – {getMonthName(selectedDate.endDate)} {selectedDate.endDate?.getDate()}, {selectedDate.endDate?.getFullYear()}</Text>
+    )
+}
+
+const DatepickerModal = ({ isModalVisible, toggleModal, setSelectedDate }: any) => {
+    return (
+        <Modal isVisible={isModalVisible} style={{ height: 50 }}>
+            <View style={styles.datepickerContainer}>
+                <Datepicker toggleModal={toggleModal} setSelectedDate={setSelectedDate} />
+            </View>
+        </Modal>
+    )
+}
+
+const ListItemHeaderContent = ({ toggleModal, selectedDate }: any) => {
+    return (
+        <>
+            <Text style={styles.title}>
+                {TITLE_HOME_C}
+            </Text>
+            <TouchableOpacity onPress={toggleModal}>
+                <RenderTitleDatepicker selectedDate={selectedDate} />
+            </TouchableOpacity>
+        </>
+    )
+}
+
+const IconChevron = () => {
+    return (
+        <Icon
+            name='chevron-down'
+            type="material-community"
+            color='black'
+        />
+    )
+}
+
+const ListItemBodyContent = () => {
+    return (
+        <>
+            {COORDINATION_MEETING_LIST.map((item) => (
+                <View key={item.eventId}>
+                    <Text style={styles.heading}>{item.eventDate}</Text>
+                    <Card key={item.eventId} containerStyle={styles.eventCard}>
+                        <Text style={styles.eventName}>{item.eventName}</Text>
+                        <Text style={styles.date}>{item.eventPlace}</Text>
+                    </Card>
+                </View>
+            ))}
+        </>
+    )
+}
+
+const UpcomingEvent = ({ setSelectedDate, selectedDate }: any) => {
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: new Date() }) as any;
 
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
     }
 
-    const RenderTitleDatepicker = () => {
-        return (
-            <Text style={styles.titleDatepicker}>{getMonthName(selectedDate.startDate)} {selectedDate.startDate?.getDate()}, {selectedDate.startDate?.getFullYear()} – {getMonthName(selectedDate.endDate)} {selectedDate.endDate?.getDate()}, {selectedDate.endDate?.getFullYear()}</Text>
-        )
-    }
-
     return (
         <>
-            <Modal isVisible={isModalVisible} style={{ height: 50 }}>
-                <View style={styles.datepickerContainer}>
-                    <Datepicker toggleModal={toggleModal} setSelectedDate={setSelectedDate} />
-                </View>
-            </Modal>
+            <DatepickerModal isModalVisible={isModalVisible} toggleModal={toggleModal} setSelectedDate={setSelectedDate} />
             <Card containerStyle={styles.card}>
                 <ListItem.Accordion
                     containerStyle={styles.accordionContainer}
                     content={
                         <ListItem.Content style={styles.listItemContentContainer}>
-                            <Text style={styles.title}>
-                                {TITLE_HOME_C}
-                            </Text>
-                            <TouchableOpacity onPress={toggleModal}>
-                                <RenderTitleDatepicker />
-                            </TouchableOpacity>
+                            <ListItemHeaderContent toggleModal={toggleModal} selectedDate={selectedDate} />
                         </ListItem.Content>
                     }
                     isExpanded={expanded}
                     onPress={() => {
                         setExpanded(!expanded);
                     }}
-                    icon={
-                        <Icon
-                            name='chevron-down'
-                            type="material-community"
-                            color='black'
-                        />
-                    }
+                    icon={<IconChevron />}
                 >
                     <ListItem>
                         <ListItem.Content>
-                            {COORDINATION_MEETING_LIST.map((item) => (
-                                <View key={item.eventId}>
-                                    <Text style={styles.heading}>{item.eventDate}</Text>
-                                    <Card key={item.eventId} containerStyle={styles.eventCard}>
-                                        <Text style={styles.eventName}>{item.eventName}</Text>
-                                        <Text style={styles.date}>{item.eventPlace}</Text>
-                                    </Card>
-                                </View>
-                            ))}
+                            <ListItemBodyContent />
                         </ListItem.Content>
                     </ListItem>
                 </ListItem.Accordion>

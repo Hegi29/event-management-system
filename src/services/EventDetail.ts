@@ -11,16 +11,24 @@ const PostEventDetail = async (data: any) => {
     return response;
 };
 
-const GetEventDetailByDateList = async () => {
-    const url = `${BASE_URL}/EventDetail/GetEventDetailList`;
-    const response = await axios.get(url);
-    console.log(response.data);
+const GetEventDetailByDateList = async (param: any) => {
+    // console.log('param: ', param);
+    const data = {
+        // activityStartDate: "2024-07-31T00:25:42.534Z", //param.startDate
+        // activityEndDate: "2024-07-31T00:25:42.534Z" //param.endDate
+        activityStartDate: param.startDate,
+        activityEndDate: param.endDate
+    };
+
+    const url = `${BASE_URL}/EventDetail/GetEventDetailByDateList`;
+    const response = await axios.post(url, data);
+    // console.log(response);
     return response;
 };
 
 const PutEventDetail = async (data: any) => {
     const url = `${BASE_URL}/EventDetail/Update`;
-    const response = await axios.put(url);
+    const response = await axios.put(url, data);
     console.log(response.data);
     return response;
 };
@@ -35,22 +43,19 @@ const GetEventDetailList = async (param: any) => {
     };
 
     const url = `${BASE_URL}/EventDetail/GetEventDetailList`;
-    const response = await axios.get(url, {params});
-    // console.log(response.data);
-    return response.data;
+    const response = await axios.get(url, { params });
+    return response;
 };
 
 const GetEventDetailStatusList = async (email: string) => {
     const url = `${BASE_URL}/EventDetail/GetEventDetailStatusList`;
-    const response = await axios.get(url, {params: { email }});
-    console.log(response.data);
+    const response = await axios.get(url, { params: { email } });
     return response;
 };
 
 const GetEventByID = async (id: string) => {
     const url = `${BASE_URL}/EventDetail/GetEventByID/${id}`;
     const response = await axios.get(url);
-    console.log(response.data);
     return response;
 };
 

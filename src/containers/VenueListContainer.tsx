@@ -11,10 +11,20 @@ const iconOptions = {
     color: '#067647'
 };
 
-const VenueListContainer = ({ data }: any) => {
+const NoData = ({ data }: any) => {
     return (
-        <View style={styles.viewContainer}>
-            {data?.map((item: any) => (
+        <>
+            {data.length === 0 && <Card containerStyle={styles.eventCard}>
+                <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>No Data</Text>
+            </Card>}
+        </>
+    )
+}
+
+const VenueListData = ({ data }: any) => {
+    return (
+        <>
+            {data.length > 0 && data?.map((item: any) => (
                 <Card key={item.venueId} containerStyle={styles.eventCard}>
                     <Image source={{ uri: item.images[0].data }} resizeMode='cover' style={styles.image} />
                     <Text style={styles.heading}>{item.venueName}</Text>
@@ -26,13 +36,14 @@ const VenueListContainer = ({ data }: any) => {
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <Image source={CalendarImage} style={{ height: 20, width: 20, marginRight: 5, marginTop: 3 }} />
-                            <Text style={styles.province}>xx total used</Text>
+                            <Text style={styles.province}>{item?.totalUsed ?? 0} total used</Text>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                        <Image source={CheckedImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                        <Text style={styles.province}>Verified on {item.verifiedDate}</Text>
-                    </View>
+                    {item.verified &&
+                        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                            <Image source={CheckedImage} style={{ height: 20, width: 20, marginRight: 5 }} />
+                            <Text style={styles.province}>Verified on {item.verified}</Text>
+                        </View>}
                     {item?.badges?.map((items: any) => (
                         <Chip
                             key={items}
@@ -46,6 +57,15 @@ const VenueListContainer = ({ data }: any) => {
                     ))}
                 </Card>
             ))}
+        </>
+    )
+}
+
+const VenueListContainer = ({ data }: any) => {
+    return (
+        <View style={styles.viewContainer}>
+            <NoData data={data} />
+            <VenueListData data={data} />
         </View>
     )
 }

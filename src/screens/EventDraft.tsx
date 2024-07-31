@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { ScrollView } from 'react-native-gesture-handler';
+import axios from 'axios';
 
 import { EventDraftListBodyContainer, EventDraftListHeadContainer } from '../containers';
 import { GetEventDetailList } from '../services/EventDetail';
@@ -14,15 +15,15 @@ const Event: React.FunctionComponent<any> = () => {
     isDraft: true,
     status: selectedStatus,
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 100,
     email: ''
   };
 
   const fetchEventList = async (param: any) => {
     try {
       const response = await GetEventDetailList(param);
-      if (response) {
-        setData(response);
+      if (response.status === axios.HttpStatusCode.Ok) {
+        setData(response.data);
         setIsLoaded(true);
       }
     } catch (error) {

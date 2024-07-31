@@ -4,15 +4,22 @@ import { Button, Card, Chip, Image, Text } from "@rneui/themed";
 
 import { DetailEventImage } from "../assets/images";
 import { formatEventDate } from "../utils/Date";
-
-const iconOptions = {
-    name: 'circle',
-    type: 'font-awesome',
-    size: 10,
-    color: '#F04438'
-};
+import { getIconOptions, getIconTitleColor, getButtonTitleStyle } from "../utils/ChipStatus";
 
 const EventListContainer = ({ data }: any) => {
+    const ChipStatus = ({ status }: any) => {
+        return (
+            <Chip
+                title={status}
+                icon={getIconOptions(status)}
+                type='outline'
+                containerStyle={{ paddingHorizontal: 0 }}
+                titleStyle={{ color: getIconTitleColor(status) }}
+                buttonStyle={getButtonTitleStyle(status)}
+            />
+        )
+    }
+
     return (
         <View style={styles.container}>
             {data?.map((item: any) => (
@@ -20,16 +27,9 @@ const EventListContainer = ({ data }: any) => {
                     <Image source={{ uri: item.venue?.images[0]?.data }} resizeMode='cover' style={styles.image} />
                     <Text style={styles.heading}>{item.activityName}</Text>
                     <Text style={styles.province}>{item.venue?.venueName}</Text>
-                    <Text style={styles.date}>{formatEventDate(item.activityStartDate,item.activityEndDate)}</Text>
+                    <Text style={styles.date}>{formatEventDate(item.activityStartDate, item.activityEndDate)}</Text>
                     <Text style={styles.province}>{item.venue?.province}</Text>
-                    <Chip
-                        title={item.status}
-                        icon={iconOptions}
-                        type='outline'
-                        containerStyle={{ paddingHorizontal: 0 }}
-                        titleStyle={{ color: '#F04438' }}
-                        buttonStyle={styles.chipButton}
-                    />
+                    <ChipStatus status={item.status} />
                     <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
                     <Text style={styles.submitDate}>{item.created}</Text>
                 </Card>
@@ -49,16 +49,9 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 20
     },
-    chipButton: { 
-        backgroundColor: '#FEE4E2', 
-        borderStyle: 'solid', 
-        borderColor: '#F04438', 
-        padding: 0, 
-        paddingRight: 20
-     },
-    container: { 
+    container: {
         marginVertical: 5
-     },
+    },
     date: {
         color: '#099057',
         fontWeight: 'bold',

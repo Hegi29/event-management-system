@@ -4,10 +4,10 @@ import { Card } from "@rneui/themed";
 
 import CreateEventTab from "../components/CreateEventTab";
 
-const CreateEventBodyContainer = ({isDraft}: any) => {
+const CreateEventBodyContainer = ({ isDraft }: any) => {
     return (
         <Card containerStyle={styles.card}>
-            <CreateEventTab isDraft={isDraft}/>
+            <CreateEventTab isDraft={isDraft} />
         </Card>
     )
 }

@@ -2,15 +2,15 @@ import { StyleSheet, View } from "react-native";
 
 import { Card, Image, Text } from "@rneui/themed";
 
-import { RequestRevisionImage, UnderReviewImage, WaitingReviewImage } from "../assets/images";
+import { RequestRevisionImage, ReviewCompleteImage, UnderReviewImage, WaitingReviewImage } from "../assets/images";
 
-const VenueDashboard = () => {
+const VenueDashboard = ({ dashboardData }: any) => {
     return (
         <View style={styles.cardContainer}>
             <Card containerStyle={styles.cardWaiting} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={WaitingReviewImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#0BA5EC' }}>20</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#0BA5EC' }}>{dashboardData?.waitingForReview}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Registered Venue</Text>
                 <Text>Venue that have finished the review</Text>
@@ -18,7 +18,7 @@ const VenueDashboard = () => {
             <Card containerStyle={styles.cardReview} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={UnderReviewImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#DF4D52' }}>10</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#DF4D52' }}>{dashboardData?.underReview}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Under Review Venue</Text>
                 <Text>Venue are in the review process</Text>
@@ -26,10 +26,18 @@ const VenueDashboard = () => {
             <Card containerStyle={styles.cardRevision} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={RequestRevisionImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#F79009' }}>20</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#F79009' }}>{dashboardData?.requestExpired}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Request Expired Venue</Text>
                 <Text>Venue that have expired</Text>
+            </Card>
+            <Card containerStyle={styles.cardComplete} wrapperStyle={styles.cardWrapper}>
+                <View style={styles.imageWrapper}>
+                    <Image style={styles.image} source={ReviewCompleteImage} />
+                    <Text h3 style={{ ...styles.textCard, color: '#17B26A' }}>{dashboardData?.reviewComplete}</Text>
+                </View>
+                <Text style={{ fontWeight: 'bold' }}>Review Complete</Text>
+                {/* <Text style={{ fontWeight: 'bold' }}>Complete</Text> */}
             </Card>
         </View>
     )

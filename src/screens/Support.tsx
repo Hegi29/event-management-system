@@ -15,7 +15,8 @@ const Support: React.FunctionComponent<any> = () => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 10, paddingBottom: 30
+    borderRadius: 10, 
+    paddingBottom: 30
   },
   title: {
     fontSize: 30,

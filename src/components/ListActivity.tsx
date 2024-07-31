@@ -3,9 +3,52 @@ import { StyleSheet, View } from "react-native";
 
 import { Avatar, Card, Icon, ListItem, Text } from "@rneui/themed";
 
-import { ACTIVITY_LIST, TITLE_HOME_D } from "../constants";
+import { TITLE_HOME_D } from "../constants";
 
-const ListActivity = () => {
+const ListItemHeadContent = () => {
+    return (
+        <Text style={styles.title}>
+            {TITLE_HOME_D}
+        </Text>
+    )
+}
+
+const IconChevron = () => {
+    return (
+        <Icon
+            name='chevron-down'
+            type="material-community"
+            color='black'
+        />
+    )
+}
+
+const ListItemBodyContent = ({ data }: any) => {
+    return (
+        <>
+            {data?.map((item: any) => (
+                <View key={item?.activityDescription}>
+                    <Avatar containerStyle={styles.avatarContainer}
+                        size={32}
+                        rounded
+                        source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
+                    />
+                    <View style={styles.containerCreated}>
+                        <Text style={styles.username}>{item.user}</Text>
+                        <Text>{item?.createdAt}</Text>
+                    </View>
+                    <View style={{ ...styles.containerEvent, marginBottom: item.activityType ? 20 : 20 }}>
+                        <Text>{item.activityType}</Text>
+                        <Text style={styles.eventName}>{item?.eventName}</Text>
+                    </View>
+                    {item.activity && <Text style={styles.activity}>"{item.activityDescription}"</Text>}
+                </View>
+            ))}
+        </>
+    )
+}
+
+const ListActivity = ({ data }: any) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -14,43 +57,18 @@ const ListActivity = () => {
                 containerStyle={styles.accordionContainer}
                 content={
                     <ListItem.Content style={styles.listItemContentContainer}>
-                        <Text style={styles.title}>
-                            {TITLE_HOME_D}
-                        </Text>
+                        <ListItemHeadContent />
                     </ListItem.Content>
                 }
                 isExpanded={expanded}
                 onPress={() => {
                     setExpanded(!expanded);
                 }}
-                icon={
-                    <Icon
-                        name='chevron-down'
-                        type="material-community"
-                        color='black'
-                    />
-                }
+                icon={<IconChevron />}
             >
                 <ListItem containerStyle={styles.container}>
                     <ListItem.Content>
-                        {ACTIVITY_LIST.map((item) => (
-                            <View key={item.activityId}>
-                                <Avatar containerStyle={styles.avatarContainer}
-                                    size={32}
-                                    rounded
-                                    source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
-                                />
-                                <View style={styles.containerCreated}>
-                                    <Text style={styles.username}>{item.userName}</Text>
-                                    <Text>{item.createdAt}</Text>
-                                </View>
-                                <View style={{ ...styles.containerEvent, marginBottom: item.activity ? 0 : 20 }}>
-                                    <Text>{item.type}</Text>
-                                    <Text style={styles.eventName}>{item.eventName}</Text>
-                                </View>
-                                {item.activity && <Text style={styles.activity}>"{item.activity}"</Text>}
-                            </View>
-                        ))}
+                        <ListItemBodyContent data={data} />
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>

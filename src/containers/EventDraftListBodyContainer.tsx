@@ -8,7 +8,7 @@ import EventListContainer from "./EventListContainer";
 const EventDraftListBodyContainer = ({ data, setSelectedStatus }: any) => {
   return (
     <Card containerStyle={styles.card}>
-      {data.data && <SearchContainer title='event' setSelectedStatus={setSelectedStatus} />}
+      {data.data && <SearchContainer title='event' setSelectedStatus={setSelectedStatus} setSelectedSearch={undefined} />}
       {data.data && <EventListContainer data={data.data} />}
     </Card>
   )

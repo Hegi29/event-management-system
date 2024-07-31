@@ -4,40 +4,64 @@ import { Card, Image, Text } from "@rneui/themed";
 
 import { RequestRevisionImage, ReviewCompleteImage, UnderReviewImage, WaitingReviewImage } from "../assets/images";
 
-const EventDashboard = () => {
-    return (
-        <View style={styles.cardContainer}>
+const EventDashboard = ({ dashboardData }: any) => {
+    const CardWaitingForReview = () => {
+        return (
             <Card containerStyle={styles.cardWaiting} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={WaitingReviewImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#0BA5EC' }}>20</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#0BA5EC' }}>{dashboardData.data?.waitingForReview}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Waiting for</Text>
                 <Text style={{ fontWeight: 'bold' }}>Review</Text>
             </Card>
+        )
+    }
+
+    const CardUnderReview = () => {
+        return (
             <Card containerStyle={styles.cardReview} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={UnderReviewImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#DF4D52' }}>10</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#DF4D52' }}>{dashboardData.data?.underReview}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Under Review</Text>
             </Card>
+        )
+    }
+
+    const CardRequestingReview = () => {
+        return (
             <Card containerStyle={styles.cardRevision} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={RequestRevisionImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#F79009' }}>20</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#F79009' }}>{dashboardData.data?.requestingRevision}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Requesting</Text>
                 <Text style={{ fontWeight: 'bold' }}>Revision</Text>
             </Card>
+        )
+    }
+
+    const CardReviewComplete = () => {
+        return (
             <Card containerStyle={styles.cardComplete} wrapperStyle={styles.cardWrapper}>
                 <View style={styles.imageWrapper}>
                     <Image style={styles.image} source={ReviewCompleteImage} />
-                    <Text h3 style={{ ...styles.textCard, color: '#17B26A' }}>5</Text>
+                    <Text h3 style={{ ...styles.textCard, color: '#17B26A' }}>{dashboardData.data?.reviewComplete}</Text>
                 </View>
                 <Text style={{ fontWeight: 'bold' }}>Review</Text>
                 <Text style={{ fontWeight: 'bold' }}>Complete</Text>
             </Card>
+        )
+    }
+
+    return (
+        <View style={styles.cardContainer}>
+            <CardWaitingForReview />
+            <CardUnderReview />
+            <CardRequestingReview />
+            <CardReviewComplete />
         </View>
     )
 }
@@ -49,9 +73,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 0
     },
-    cardWrapper: { 
-        width: 130, 
-        height: 110 
+    cardWrapper: {
+        width: 130,
+        height: 110
     },
     cardWaiting: {
         backgroundColor: '#b1f1fd',
@@ -89,7 +113,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     textCard: {
-        fontWeight: 'bold', 
+        fontWeight: 'bold',
         paddingBottom: 20
     }
 });

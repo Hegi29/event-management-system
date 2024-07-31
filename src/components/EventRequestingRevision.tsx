@@ -1,13 +1,43 @@
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 
-import { Button, Card, Chip, Icon, Image, ListItem, Text } from "@rneui/themed";
+import { Card, Icon, Image, ListItem, Text } from "@rneui/themed";
 
-import { DetailEventImage, EventRequestingRevisionImage } from "../assets/images";
-import { EVENT_LIST } from "../constants/mock";
+import { EventRequestingRevisionImage } from "../assets/images";
 import { TITLE_HOME_A } from "../constants";
+import { EventListContainer } from "../containers";
 
-const EventRequestingRevision = () => {
+const ListItemContentHeader = () => {
+    return (
+        <>
+            <Image source={EventRequestingRevisionImage} style={styles.imageIconTitle} />
+            <Text style={styles.title}>
+                {TITLE_HOME_A}
+            </Text>
+        </>
+    )
+}
+
+const ChevronIcon = () => {
+    return (
+        <Icon
+            name='chevron-down'
+            type="material-community"
+            color='black'
+        />
+    )
+}
+
+const ListItemContentBody = ({ data }: any) => {
+    return (
+        <>
+            {data.length > 0 && <EventListContainer data={data} />}
+            {data.length === 0 && <Text style={{ textAlign: 'center', fontWeight: 'semibold' }}>No Data</Text>}
+        </>
+    )
+}
+
+const EventRequestingRevision = ({ data }: any) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -16,50 +46,18 @@ const EventRequestingRevision = () => {
                 containerStyle={styles.listItemAccordionContainer}
                 content={
                     <ListItem.Content style={styles.listItemContentContainer}>
-                        <Image source={EventRequestingRevisionImage} style={styles.imageIconTitle} />
-                        <Text style={styles.title}>
-                            {TITLE_HOME_A}
-                        </Text>
+                        <ListItemContentHeader />
                     </ListItem.Content>
                 }
                 isExpanded={expanded}
                 onPress={() => {
                     setExpanded(!expanded);
                 }}
-                icon={
-                    <Icon
-                        name='chevron-down'
-                        type="material-community"
-                        color='black'
-                    />
-                }
+                icon={<ChevronIcon />}
             >
-                <ListItem containerStyle={{ paddingTop: 0 }}>
+                <ListItem containerStyle={styles.listItemBodyContainer}>
                     <ListItem.Content>
-                        {EVENT_LIST.map((item) => (
-                            <Card key={item.eventId} containerStyle={styles.eventCard}>
-                                <Image source={{ uri: item.venue.images.data[0] }} resizeMode='cover' style={styles.image} />
-                                <Text style={styles.heading}>{item.activityName}</Text>
-                                <Text style={styles.province}>{item.venueName}</Text>
-                                <Text style={styles.date}>{item.activityStartDate} - {item.activityStartDate}</Text>
-                                <Text style={styles.province}>{item.venue.province}</Text>
-                                <Chip
-                                    title={item.status}
-                                    icon={{
-                                        name: 'circle',
-                                        type: 'font-awesome',
-                                        size: 10,
-                                        color: '#F04438'
-                                    }}
-                                    type='outline'
-                                    containerStyle={{ paddingHorizontal: 0 }}
-                                    titleStyle={{ color: '#F04438' }}
-                                    buttonStyle={styles.chipButton}
-                                />
-                                <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} />
-                                <Text style={styles.submitDate}>Submitted on {item.created}</Text>
-                            </Card>
-                        ))}
+                        <ListItemContentBody data={data} />
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>
@@ -121,6 +119,9 @@ const styles = StyleSheet.create({
     listItemAccordionContainer: {
         borderRadius: 20,
         paddingLeft: 0
+    },
+    listItemBodyContainer: {
+        paddingTop: 0
     },
     listItemContentContainer: {
         flexDirection: 'row',

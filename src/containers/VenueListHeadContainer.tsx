@@ -7,7 +7,7 @@ import { ExportImage } from "../assets/images";
 import { SUBTITLE_EVENT, TITLE_VENUE } from "../constants";
 import { VenueDashboard } from "../components";
 
-const VenueListHeadContainer = () => {
+const VenueListHeadContainer = ({ dashboardData }: any) => {
     const navigation = useNavigation();
 
     return (
@@ -18,7 +18,7 @@ const VenueListHeadContainer = () => {
                 <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
                 <Button title="Add New Venue" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateVenue' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
             </View>
-            <VenueDashboard />
+            <VenueDashboard dashboardData={dashboardData} />
         </Card>
     )
 }

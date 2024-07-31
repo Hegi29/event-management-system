@@ -6,17 +6,23 @@ import { useNavigation } from "@react-navigation/native";
 import { ExportImage } from "../assets/images";
 import { SUBTITLE_EVENT } from "../constants";
 
-const UsersHeadContainer = () => {
+const ActionButton = () => {
     const navigation = useNavigation();
 
+    return (
+        <View style={styles.buttonWrapper}>
+            <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
+            <Button title="Add New Users" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+        </View>
+    )
+}
+
+const UsersHeadContainer = () => {
     return (
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>Users</Text>
             <Text style={styles.subtitle}>{SUBTITLE_EVENT}</Text>
-            <View style={styles.buttonWrapper}>
-                <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-                <Button title="Add New Users" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
-            </View>
+            <ActionButton />
         </Card>
     )
 }
