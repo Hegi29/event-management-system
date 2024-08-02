@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { Card, Chip, Icon, Image, ListItem, Text } from "@rneui/themed";
+import { Button, Card, Icon, Image, ListItem, Text } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
 
-import { CalendarImage, CheckedImage, PhoneImage, TopVenueImage } from "../assets/images";
-import { TOP_VENUE_LIST } from "../constants/mock";
+import { CalendarImage, CheckedImage, DetailEventImage, PhoneImage, TopVenueImage } from "../assets/images";
 import { TITLE_HOME_B } from "../constants";
 
 const ListItemHeaderContent = () => {
@@ -28,62 +28,88 @@ const IconChevron = () => {
     )
 }
 
-const ListItemBodyContent = () => {
+const ListItemBodyContent = ({ data }: any) => {
+    const navigation = useNavigation();
+
     return (
-        <>
-            {TOP_VENUE_LIST.map((item) => (
+        <View style={{ padding: 0, width: 350 }}>
+            {data.length > 0 && data?.map((item: any) => (
                 <Card key={item.venueId} containerStyle={styles.eventCard}>
-                    <Image source={{ uri: item.images[0] }} resizeMode='cover' style={styles.image} />
+                    <Image source={{ uri: item.images[0].data }} resizeMode='cover' style={styles.image} />
                     <Text style={styles.heading}>{item.venueName}</Text>
-                    <Text style={styles.province}>{item.venueAddress}</Text>
-
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                            <Image source={PhoneImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                            <Text style={styles.province}>{item.phoneNumber}</Text>
-                        </View>
-
-                        <View style={{ flexDirection: 'row' }}>
-                            <Image source={CalendarImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                            <Text style={styles.province}>{item.totalUsed} total used</Text>
-                        </View>
-                    </View>
-
+                    <Text style={{ ...styles.province, fontWeight: '700' }}>{item.subDistric}, {item.province}</Text>
                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                        <Image source={CheckedImage} style={{ height: 20, width: 20, marginRight: 5 }} />
-                        <Text style={styles.province}>Verified on {item.verifiedDate}</Text>
+                        <View style={{ flexDirection: 'row', marginRight: 10 }}>
+                            <Image source={PhoneImage} style={styles.phoneUsed} />
+                            <Text style={{ ...styles.province, marginTop: 2 }}>{item.phoneNumber}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Image source={CalendarImage} style={styles.phoneUsed} />
+                            <Text style={{ ...styles.province, marginTop: 2 }}>{item?.totalUsed ?? 0} total used</Text>
+                        </View>
                     </View>
+                    {item.verified &&
+                        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                            <Image source={CheckedImage} style={styles.checkedImage} />
+                            <Text style={{ ...styles.province, marginTop: -1 }}>Verified on {item.verified}</Text>
+                        </View>
+                    }
 
-                    {item.badges.map((items) => (
-                        <Chip
-                            key={items}
-                            title={items}
-                            icon={{
-                                name: 'circle',
-                                type: 'font-awesome',
-                                size: 10,
-                                color: '#067647'
-                            }}
-                            type='outline'
-                            containerStyle={{ paddingHorizontal: 0, marginBottom: 10 }}
-                            titleStyle={{ color: '#067647' }}
-                            buttonStyle={styles.chipButton}
-                        />
-                    ))}
-                    <Chip
-                        title='10 events were held here'
-                        type='outline'
-                        containerStyle={{ paddingHorizontal: 0, marginBottom: 10, marginTop: 30 }}
-                        titleStyle={{ color: '#fff' }}
-                        buttonStyle={{ backgroundColor: '#1072BA', borderStyle: 'solid' }}
-                    />
+                    {/* {item.status === 'hsse' &&
+                        <View style={styles.hsseContainer}>
+                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> HSSE rating {item.hsse}</Text>
+                        </View>
+                    } */}
+
+                    {item.status === 'Waiting for review' &&
+                        <View style={styles.eventContainer}>
+                            <Text style={{ color: '#026AA2' }}><Icon name='circle' type="font-awesome" size={10} color='#026AA2' /> {item.status}</Text>
+                        </View>
+                    }
+
+                    {item.status === 'Request expired' &&
+                        <View style={styles.expiredContainer}>
+                            <Text style={{ color: '#B54708' }}><Icon name='circle' type="font-awesome" size={10} color='#B54708' /> {item.status}</Text>
+                        </View>
+                    }
+
+                    {item.status === 'This venue is under review' &&
+                        <View style={styles.reviewContainer}>
+                            <Text style={{ color: '#F04438' }}><Icon name='circle' type="font-awesome" size={10} color='#F04438' /> {item.status}</Text>
+                        </View>
+                    }
+
+                    {item.status === 'Review Complete' &&
+                        <View style={styles.hsseContainer}>
+                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> {item.status}</Text>
+                        </View>
+                    }
+
+                    <View style={{ display: 'flex', flexDirection: 'row' }}>
+                        <View style={styles.statusContainer}>
+                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> Health {item.health}</Text>
+                        </View>
+                        <View style={styles.statusContainer}>
+                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> Security {item.security}</Text>
+                        </View>
+                    </View>
+                    <View style={{ display: 'flex', flexDirection: 'row', paddingVertical: 10 }}>
+                        <View style={styles.statusContainer}>
+                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> Safety {item.safety}</Text>
+                        </View>
+                        <View style={styles.statusContainer}>
+                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> Environment {item.environment}</Text>
+                        </View>
+                    </View>
+                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} onPress={() => navigation.navigate('EventDetail' as never)} />
+                    <Text style={styles.updatedDate}>{item.created}</Text>
                 </Card>
             ))}
-        </>
+        </View>
     )
 }
 
-const TopVenue = () => {
+const TopVenue = ({ data }: any) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -103,7 +129,7 @@ const TopVenue = () => {
             >
                 <ListItem containerStyle={styles.listItemBodyContainer}>
                     <ListItem.Content>
-                        <ListItemBodyContent />
+                        <ListItemBodyContent data={data} />
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>
@@ -135,7 +161,7 @@ const styles = StyleSheet.create({
     },
     eventCard: {
         borderRadius: 13,
-        marginLeft: 0,
+        // marginLeft: 0,
         width: '100%'
     },
     heading: {
@@ -165,7 +191,9 @@ const styles = StyleSheet.create({
         paddingLeft: 0
     },
     listItemBodyContainer: {
-        paddingTop: 0
+        padding: 0,
+        paddingBottom: 20,
+        borderRadius: 20
     },
     listItemContentContainer: {
         flexDirection: 'row',
@@ -188,6 +216,79 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
         paddingTop: 10,
         paddingBottom: 0
+    },
+    phoneUsed: {
+        height: 20,
+        width: 20,
+        marginRight: 5,
+        marginTop: 3
+    },
+    checkedImage: {
+        height: 20,
+        width: 20,
+        marginRight: 5
+    },
+    hsseContainer: {
+        backgroundColor: '#ABEFC6',
+        borderStyle: 'solid',
+        borderColor: '#067647',
+        marginRight: 10,
+        width: 146,
+        marginBottom: 30,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
+    },
+    reviewContainer: {
+        backgroundColor: '#FEF3F2',
+        borderStyle: 'solid',
+        borderColor: '#FEE4E2',
+        marginRight: 10,
+        width: 200,
+        marginBottom: 30,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
+    },
+    expiredContainer: {
+        backgroundColor: '#FFFAEB',
+        borderStyle: 'solid',
+        borderColor: '#FEDF89',
+        marginRight: 10,
+        width: 146,
+        marginBottom: 30,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
+    },
+    eventContainer: {
+        backgroundColor: '#F5FBFF',
+        borderStyle: 'solid',
+        borderColor: '#E0F2FE',
+        marginRight: 10,
+        width: 200,
+        marginBottom: 30,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
+    },
+    statusContainer: {
+        backgroundColor: '#ABEFC6',
+        borderStyle: 'solid',
+        borderColor: '#067647',
+        marginRight: 5,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
+    },
+    updatedDate: {
+        textAlign: 'center',
+        color: '#667085'
     }
 });
 

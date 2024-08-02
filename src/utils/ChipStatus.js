@@ -74,6 +74,21 @@ const getButtonTitleStyle = (tipe) => {
     }
 }
 
+const getBGColorStatus = (tipe) => {
+    switch (tipe) {
+        case 'Waiting for review':
+            return styles.BGColorReview;
+        case 'Under Review':
+            return styles.BGColor;
+        case 'Requesting Revision':
+            return styles.BGColor;
+        case 'Review Complete':
+            return styles.BGColorComplete;
+        default:
+            return styles.BGColor;
+    }
+}
+
 const styles = StyleSheet.create({
     chipButton: {
         backgroundColor: '#FEE4E2',
@@ -95,10 +110,29 @@ const styles = StyleSheet.create({
         borderColor: '#026AA2',
         padding: 0,
         paddingRight: 20
+    },
+    BGColor: {
+        backgroundColor: '#FEE4E2',
+        borderStyle: 'solid',
+        borderColor: '#F04438',
+        paddingVertical: 5, paddingHorizontal: 10, borderWidth: 1, borderRadius: 30
+    },
+    BGColorComplete: {
+        backgroundColor: '#ABEFC6',
+        borderStyle: 'solid',
+        borderColor: '#079455',
+        paddingVertical: 5, paddingHorizontal: 10, borderWidth: 1, borderRadius: 30
+    },
+    BGColorReview: {
+        backgroundColor: '#E0F2FE',
+        borderStyle: 'solid',
+        borderColor: '#026AA2',
+        paddingVertical: 5, paddingHorizontal: 10, borderWidth: 1, borderRadius: 30
     }
 });
 
 export {
+    getBGColorStatus,
     getIconOptions,
     getIconTitleColor,
     getButtonTitleStyle

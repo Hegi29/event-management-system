@@ -5,10 +5,12 @@ import { Card } from "@rneui/themed";
 import SearchContainer from "./SearchContainer";
 import EventListContainer from "./EventListContainer";
 
-const EventListBodyContainer = ({ data, setSelectedStatus }: any) => {
+const EventListBodyContainer = ({ data, setSelectedStatus, setSelectedSearch }: any) => {
   return (
     <Card containerStyle={styles.card}>
-      {data.data && <SearchContainer title='event' setSelectedStatus={setSelectedStatus} setSelectedSearch={undefined} />}
+      {data.data &&
+        <SearchContainer title='event' setSelectedStatus={setSelectedStatus} setSelectedSearch={setSelectedSearch} />
+      }
       {data.data && <EventListContainer data={data.data} />}
     </Card>
   )

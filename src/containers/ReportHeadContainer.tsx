@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#0D5B95'
     },
     buttonExport: {
-        width: 145,
+        width: 140,
         marginRight: 5,
         borderRadius: 10,
         borderColor: '#000'

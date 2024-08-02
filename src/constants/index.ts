@@ -53,6 +53,7 @@ const CREATE_VENUE_TAB = {
   SAFETY: 3,
   ENVIRONMENT: 4
 };
+const DRAWER_POSITION = 'right';
 const EVENT_DETAIL_TAB_IDX = 0;
 const NEXT = 'next';
 const SUBTITLE_EVENT = 'Track, manage and forecast your event';
@@ -69,6 +70,7 @@ export {
   ACTIVITY_LIST,
   APP_TITLE,
   BASE_URL,
+  DRAWER_POSITION,
   EVENT_DETAIL_TAB_IDX,
   TIMEOUT_AXIOS,
   TITLE_EVENT,

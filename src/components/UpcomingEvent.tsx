@@ -7,11 +7,12 @@ import Modal from "react-native-modal";
 import { COORDINATION_MEETING_LIST } from "../constants/mock";
 import { getMonthName } from "../utils/Date";
 import { TITLE_HOME_C } from "../constants";
+
 import Datepicker from "./Datepicker";
 
 const RenderTitleDatepicker = ({ selectedDate }: any) => {
     return (
-        <Text style={styles.titleDatepicker}>{getMonthName(selectedDate.startDate)} {selectedDate.startDate?.getDate()}, {selectedDate.startDate?.getFullYear()} – {getMonthName(selectedDate.endDate)} {selectedDate.endDate?.getDate()}, {selectedDate.endDate?.getFullYear()}</Text>
+        <Text style={styles.titleDatepicker}>{getMonthName(selectedDate.startDate).slice(0, 4)} {selectedDate.startDate?.getDate()}, {selectedDate.startDate?.getFullYear()} – {getMonthName(selectedDate.endDate).slice(0, 4)} {selectedDate.endDate?.getDate()}, {selectedDate.endDate?.getFullYear()}</Text>
     )
 }
 
@@ -52,7 +53,7 @@ const ListItemBodyContent = () => {
     return (
         <>
             {COORDINATION_MEETING_LIST.map((item) => (
-                <View key={item.eventId}>
+                <View key={item.eventId} style={styles.eventCard}>
                     <Text style={styles.heading}>{item.eventDate}</Text>
                     <Card key={item.eventId} containerStyle={styles.eventCard}>
                         <Text style={styles.eventName}>{item.eventName}</Text>
@@ -64,7 +65,7 @@ const ListItemBodyContent = () => {
     )
 }
 
-const UpcomingEvent = ({ setSelectedDate, selectedDate }: any) => {
+const UpcomingEvent = ({ dataEventByDate, setSelectedDate, selectedDate }: any) => {
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -89,7 +90,7 @@ const UpcomingEvent = ({ setSelectedDate, selectedDate }: any) => {
                     }}
                     icon={<IconChevron />}
                 >
-                    <ListItem>
+                    <ListItem containerStyle={styles.listItemBodyContainer}>
                         <ListItem.Content>
                             <ListItemBodyContent />
                         </ListItem.Content>
@@ -127,11 +128,12 @@ const styles = StyleSheet.create({
     },
     eventCard: {
         borderRadius: 13,
+        marginBottom: 15,
         marginLeft: 0,
-        width: '100%',
-        marginBottom: 30
+        width: '100%'
     },
     heading: {
+        marginLeft: 15,
         fontSize: 14,
         fontWeight: 'bold'
     },
@@ -146,6 +148,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
         borderRadius: 5,
         marginBottom: 20
+    },
+    listItemBodyContainer: {
+        paddingTop: 0,
+        borderRadius: 20
     },
     listItemContentContainer: {
         flexDirection: 'row',

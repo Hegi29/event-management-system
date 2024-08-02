@@ -1,8 +1,11 @@
 import axios from 'axios';
 
 import { BASE_URL, TIMEOUT_AXIOS } from '../constants';
+import { storage } from '../utils/Storage';
 
 axios.defaults.timeout = TIMEOUT_AXIOS;
+
+const email = storage.getString('user.email');
 
 const PostEventDetail = async (data: any) => {
     const url = `${BASE_URL}/EventDetail/Create`;
@@ -12,17 +15,9 @@ const PostEventDetail = async (data: any) => {
 };
 
 const GetEventDetailByDateList = async (param: any) => {
-    // console.log('param: ', param);
-    const data = {
-        // activityStartDate: "2024-07-31T00:25:42.534Z", //param.startDate
-        // activityEndDate: "2024-07-31T00:25:42.534Z" //param.endDate
-        activityStartDate: param.startDate,
-        activityEndDate: param.endDate
-    };
-
-    const url = `${BASE_URL}/EventDetail/GetEventDetailByDateList`;
-    const response = await axios.post(url, data);
-    // console.log(response);
+    const query = `ActivityStartDate=${param.activityStartDate}&ActivityEndDate=${param.ActivityEndDate}`;
+    const url = `${BASE_URL}/EventDetail/GetEventDetailByDateList?${query}`;
+    const response = await axios.get(url);
     return response;
 };
 
@@ -34,22 +29,15 @@ const PutEventDetail = async (data: any) => {
 };
 
 const GetEventDetailList = async (param: any) => {
-    const params = {
-        isDraft: param.isDraft,
-        status: param.status,
-        pageNumber: param.pageNumber,
-        pageSize: param.pageSize,
-        email: param.email
-    };
-
-    const url = `${BASE_URL}/EventDetail/GetEventDetailList`;
-    const response = await axios.get(url, { params });
+    const params = `isDraft=${param.isDraft}&status=${param.status}&keyword=${param.keyword}&pageNumber=${param.pageNumber}&pageSize=${param.pageSize}&email=${email}`;
+    const url = `${BASE_URL}/EventDetail/GetEventDetailList?${params}`;
+    const response = await axios.get(url);
     return response;
 };
 
-const GetEventDetailStatusList = async (email: string) => {
-    const url = `${BASE_URL}/EventDetail/GetEventDetailStatusList`;
-    const response = await axios.get(url, { params: { email } });
+const GetEventDetailStatusList = async () => {
+    const url = `${BASE_URL}/EventDetail/GetEventDetailStatusList?email=${email}`;
+    const response = await axios.get(url);
     return response;
 };
 

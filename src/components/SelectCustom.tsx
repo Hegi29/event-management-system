@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Icon, Text } from "@rneui/themed";
 import SelectDropdown from "react-native-select-dropdown";
 
-const listStatus = [
+const listStatusEvent = [
     { title: 'All Status' },
     { title: 'Waiting for Review' },
     { title: 'Under Review' },
@@ -11,10 +11,18 @@ const listStatus = [
     { title: 'Review Complete' }
 ];
 
-const SelectCustom = ({ setSelectedStatus }: any) => {
+const listStatusVenue = [
+    { title: 'All Status' },
+    { title: 'Waiting for Review' },
+    { title: 'Under Review' },
+    { title: 'Request Expired' },
+    { title: 'Registered Venue' }
+];
+
+const SelectCustom = ({ setSelectedStatus, title }: any) => {
     return (
         <SelectDropdown
-            data={listStatus}
+            data={title === 'venue' ? listStatusVenue: listStatusEvent}
             onSelect={(selectedItem) => {
                 setSelectedStatus(selectedItem.title);
             }}

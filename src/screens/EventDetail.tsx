@@ -1,14 +1,12 @@
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { CreateEventBodyContainer, CreateEventHeadContainer } from '../containers';
+import { Text } from '@rneui/themed';
 
 const EventDetail: React.FunctionComponent<any> = () => {
-  const isDraft = true; // true jika dari event draft
 
   return (
     <ScrollView>
-      <CreateEventHeadContainer />
-      <CreateEventBodyContainer isDraft={isDraft} />
+      <Text>Event Detail</Text>
     </ScrollView>
   );
 };

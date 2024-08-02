@@ -4,6 +4,7 @@ import { Button, Card, Icon, Image, Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 import { ExportImage } from "../assets/images";
+
 import { SUBTITLE_EVENT, TITLE_VENUE } from "../constants";
 import { VenueDashboard } from "../components";
 
@@ -28,19 +29,22 @@ const styles = StyleSheet.create({
         width: 180,
         borderRadius: 10,
         borderColor: '#000',
-        backgroundColor: '#0D5B95'
+        backgroundColor: '#0D5B95',
+        height: 50
     },
     buttonExport: {
-        width: 145,
+        width: 160,
         marginRight: 5,
         borderRadius: 10,
-        borderColor: '#000'
+        borderColor: '#000',
+        height: 50
     },
     buttonWrapper: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        padding: 0
+        padding: 0,
+        marginBottom: 10
     },
     cardContainer: {
         borderRadius: 10,

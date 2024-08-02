@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Avatar, Card, Icon, ListItem, Text } from "@rneui/themed";
@@ -27,7 +27,7 @@ const ListItemBodyContent = ({ data }: any) => {
     return (
         <>
             {data?.map((item: any) => (
-                <View key={item?.activityDescription}>
+                <View key={useId()} style={styles.eventCard}>
                     <Avatar containerStyle={styles.avatarContainer}
                         size={32}
                         rounded
@@ -66,7 +66,7 @@ const ListActivity = ({ data }: any) => {
                 }}
                 icon={<IconChevron />}
             >
-                <ListItem containerStyle={styles.container}>
+                <ListItem containerStyle={styles.listItemBodyContainer}>
                     <ListItem.Content>
                         <ListItemBodyContent data={data} />
                     </ListItem.Content>
@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
     },
     card: {
         borderRadius: 20,
-        padding: 0
+        padding: 0,
+        marginBottom: 20
     },
     container: {
         paddingTop: 0
@@ -144,6 +145,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
         borderRadius: 5,
         marginBottom: 20
+    },
+    listItemBodyContainer: {
+        paddingTop: 0,
+        borderRadius: 40
     },
     listItemContentContainer: {
         flexDirection: 'row',

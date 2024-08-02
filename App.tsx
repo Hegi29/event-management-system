@@ -10,9 +10,9 @@ function App(): React.JSX.Element {
   const navigationRef = useNavigationContainerRef();
 
   return (
-      <NavigationContainer ref={navigationRef}>
-        <DrawerNavigation navigationRef={navigationRef}/>
-      </NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
+      <DrawerNavigation navigationRef={navigationRef} />
+    </NavigationContainer>
   );
 }
 

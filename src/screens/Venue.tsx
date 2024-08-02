@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import axios from 'axios';
 
 import { VenueListBodyContainer, VenueListHeadContainer } from '../containers';
-import { GetVenueByKeyword, GetVenueList, GetVenueStatusList } from '../services/VenueService';
+import { GetVenueList, GetVenueStatusList } from '../services/VenueService';
 import { ModalError } from '../components';
 
 const Venue: React.FunctionComponent<any> = () => {
@@ -23,14 +23,16 @@ const Venue: React.FunctionComponent<any> = () => {
 
   const params = {
     isDraft: false,
-    status: selectedStatus === 'All Status' ? '' : selectedStatus,
+    status: selectedStatus === 'All Status' ? '' : (selectedStatus === 'Registered Venue' ? 'Review Complete' : selectedStatus),
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 100,
+    keyword: selectedSearch,
+    email: ''
   };
 
   const fetchVenueDashboard = async () => {
     try {
-      const response = await GetVenueStatusList('');
+      const response = await GetVenueStatusList();
       if (response.status === axios.HttpStatusCode.Ok) {
         setDashboardData(response.data);
       }
@@ -52,19 +54,6 @@ const Venue: React.FunctionComponent<any> = () => {
     }
   }
 
-  const fetchVenueListByKeyword = async () => {
-    const response = await GetVenueByKeyword(selectedSearch);
-    if (response?.status === axios.HttpStatusCode.Ok) {
-      setData(response.data);
-      setIsError(false);
-      setErrorData({});
-    } else {
-      setIsError(true);
-      setIsModalVisible(true);
-      setErrorData(response);
-    }
-  }
-
   useEffect(() => {
     fetchVenueDashboard();
     fetchVenueList();
@@ -73,16 +62,11 @@ const Venue: React.FunctionComponent<any> = () => {
   useEffect(() => {
     fetchVenueDashboard();
     fetchVenueList();
-  }, [selectedStatus]);
-
-  useEffect(() => {
-    fetchVenueDashboard();
-    fetchVenueListByKeyword();
-  }, [selectedSearch]);
+  }, [selectedStatus, selectedSearch]);
 
   return (
     <ScrollView>
-      {isError && <ModalError isModalVisible={isModalVisible} handleOk={handleOk} statusCode={errorData.status} message={errorData.message} />}
+      {isError && <ModalError isModalVisible={isModalVisible} handleOk={handleOk} statusCode={errorData?.status} message={errorData?.message} />}
       <VenueListHeadContainer dashboardData={dashboardData} />
       <VenueListBodyContainer data={data} setSelectedSearch={setSelectedSearch} setSelectedStatus={setSelectedStatus} />
     </ScrollView>

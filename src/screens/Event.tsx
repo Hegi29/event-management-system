@@ -1,28 +1,29 @@
 import { useEffect, useState } from 'react';
 
 import { ScrollView } from 'react-native-gesture-handler';
+import axios from 'axios';
 
 import { GetEventDetailList, GetEventDetailStatusList } from '../services/EventDetail';
 import { EventListBodyContainer, EventListHeadContainer } from '../containers';
-import axios from 'axios';
 
 const Event: React.FunctionComponent<any> = () => {
   const [data, setData] = useState({}) as any;
   const [dataDashboard, setDataDashboard] = useState({}) as any;
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedSearch, setSelectedSearch] = useState('');
 
   const params = {
     isDraft: false,
     status: selectedStatus === 'All Status' ? '' : selectedStatus,
     pageNumber: 1,
     pageSize: 100,
-    email: ''
+    keyword: selectedSearch
   };
 
   const fetchEventDashboard = async () => {
     try {
-      const response = await GetEventDetailStatusList('');
+      const response = await GetEventDetailStatusList();
       if (response.status === axios.HttpStatusCode.Ok) {
         setDataDashboard(response.data);
       }
@@ -52,12 +53,12 @@ const Event: React.FunctionComponent<any> = () => {
   useEffect(() => {
     fetchEventDashboard();
     fetchEventList();
-  }, [selectedStatus]);
+  }, [selectedStatus, selectedSearch]);
 
   return (
     <ScrollView>
       <EventListHeadContainer dashboardData={dataDashboard} />
-      {isLoaded && <EventListBodyContainer data={data} setSelectedStatus={setSelectedStatus} />}
+      {isLoaded && <EventListBodyContainer data={data} setSelectedSearch={setSelectedSearch} setSelectedStatus={setSelectedStatus} />}
     </ScrollView>
   );
 };

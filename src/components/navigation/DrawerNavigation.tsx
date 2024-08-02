@@ -2,7 +2,8 @@ import { StyleSheet } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { CreateEvent, CreateVenue, Event, EventDraft, Home, Report, Setting, Support, Users, Venue } from '../../screens';
+import { CreateEvent, CreateVenue, Event, EventDetail, EventDraft, Home, Login, Report, Setting, Support, Users, Venue } from '../../screens';
+import { DRAWER_POSITION } from '../../constants';
 
 import CustomDrawerContent from './CustomDrawer';
 import TopLeftNav from './TopLeftNav';
@@ -14,7 +15,7 @@ const DrawerNavigation = ({ navigationRef }: any) => {
   return (
     <Drawer.Navigator screenOptions={({ navigation }) => ({
       drawerStyle: styles.drawerBackground,
-      drawerPosition: 'right',
+      drawerPosition: DRAWER_POSITION,
       title: "",
       headerStyle: styles.headerBackground,
       headerLeft: () => <TopLeftNav />,
@@ -22,8 +23,10 @@ const DrawerNavigation = ({ navigationRef }: any) => {
     })}
       drawerContent={(props) => <CustomDrawerContent {...props} navigationRef={navigationRef} />}
     >
+      <Drawer.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Event" component={Event} />
+      <Drawer.Screen name="EventDetail" component={EventDetail} />
       <Drawer.Screen name="EventDraft" component={EventDraft} />
       <Drawer.Screen name="CreateEvent" component={CreateEvent} />
       <Drawer.Screen name="Venue" component={Venue} />
@@ -37,10 +40,6 @@ const DrawerNavigation = ({ navigationRef }: any) => {
 }
 
 const styles = StyleSheet.create({
-  containerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start'
-  },
   drawerBackground: {
     backgroundColor: '#408EC9'
   },

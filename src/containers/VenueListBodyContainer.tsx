@@ -8,7 +8,7 @@ import VenueListContainer from "./VenueListContainer";
 const VenueListBodyContainer = ({ data, setSelectedStatus, setSelectedSearch }: any) => {
     return (
         <Card containerStyle={styles.cardContainer}>
-            <SearchContainer title='venue' setSelectedStatus={setSelectedStatus} setSelectedSearch={setSelectedSearch} />
+            <SearchContainer title='venue' setSelectedStatus={setSelectedStatus} setSelectedSearch={setSelectedSearch}/>
             <VenueListContainer data={data} />
         </Card>
     )

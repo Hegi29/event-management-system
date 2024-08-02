@@ -10,13 +10,14 @@ const Event: React.FunctionComponent<any> = () => {
   const [data, setData] = useState({}) as any;
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedSearch, setSelectedSearch] = useState('');
 
   const params = {
     isDraft: true,
     status: selectedStatus,
     pageNumber: 1,
     pageSize: 100,
-    email: ''
+    keyword: selectedSearch
   };
 
   const fetchEventList = async (param: any) => {
@@ -34,12 +35,12 @@ const Event: React.FunctionComponent<any> = () => {
 
   useEffect(() => {
     fetchEventList(params);
-  }, [selectedStatus]);
+  }, [selectedStatus, selectedSearch]);
   
   return (
     <ScrollView>
       <EventDraftListHeadContainer />
-      {isLoaded && <EventDraftListBodyContainer data={data} setSelectedStatus={setSelectedStatus} />}
+      {isLoaded && <EventDraftListBodyContainer data={data} setSelectedSearch={setSelectedSearch}  setSelectedStatus={setSelectedStatus} />}
     </ScrollView>
   );
 };

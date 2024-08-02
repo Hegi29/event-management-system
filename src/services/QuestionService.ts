@@ -4,30 +4,37 @@ import { BASE_URL, TIMEOUT_AXIOS } from "../constants";
 
 axios.defaults.timeout = TIMEOUT_AXIOS;
 
-const Create = async (id: string) => {
-    const url = `${BASE_URL}/Question/Create/${id}`;
-    const response = await axios.delete(url);
+const Create = async (data: any) => {
+    const url = `${BASE_URL}/Question/Create`;
+    const response = await axios.post(url, data);
     console.log(response.data);
     return response;
 };
 
-const GetAllQuestion = async (id: string) => {
-    const url = `${BASE_URL}/Question/GetAllQuestion/${id}`;
-    const response = await axios.delete(url);
+const GetAllQuestion = async (param: any) => {
+    const url = `${BASE_URL}/Question/GetAllQuestion?sectionName=${param.sectionName}&venueId=${param.venueId}&includeEvent=${param.includeEvent}`;
+    const response = await axios.get(url);
     console.log(response.data);
     return response;
 };
 
-const GetAllQuestionToVerify = async (id: string) => {
-    const url = `${BASE_URL}/Question/GetAllQuestionToVerify/${id}`;
-    const response = await axios.delete(url);
+const GetAllQuestionToVerify = async (param: any) => {
+    const url = `${BASE_URL}/Question/GetAllQuestionToVerify?eventId=${param.eventId}&venueId=${param.venueId}&sectionName=${param.sectionName}`;
+    const response = await axios.get(url);
     console.log(response.data);
     return response;
 };
 
-const GetAllQuestionStatus = async (id: string) => {
-    const url = `${BASE_URL}/Question/GetAllQuestionStatus/${id}`;
-    const response = await axios.delete(url);
+const GetAllQuestionStatus = async (param: any) => {
+    const url = `${BASE_URL}/Question/GetAllQuestionStatus?eventId=${param.eventId}&venueId=${param.venueId}&type=${param.type}`;
+    const response = await axios.get(url);
+    console.log(response.data);
+    return response;
+};
+
+const GetAllQuestionEvidenceStatus = async (param: any) => {
+    const url = `${BASE_URL}/Question/GetAllQuestionEvidenceStatus?eventId=${param.eventId}&venueId=${param.venueId}`;
+    const response = await axios.get(url);
     console.log(response.data);
     return response;
 };
@@ -35,6 +42,7 @@ const GetAllQuestionStatus = async (id: string) => {
 export {
     Create,
     GetAllQuestion,
-    GetAllQuestionToVerify,
-    GetAllQuestionStatus
+    GetAllQuestionEvidenceStatus,
+    GetAllQuestionStatus,
+    GetAllQuestionToVerify
 }

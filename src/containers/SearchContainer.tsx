@@ -33,12 +33,12 @@ const FilterSearch = ({ setSelectedSearch, title }: any) => {
     )
 }
 
-const FilterStatus = ({ setSelectedStatus }: any) => {
+const FilterStatus = ({ setSelectedStatus, title }: any) => {
     return (
         <>
             <Text style={styles.title}>Status</Text>
             <View style={{ paddingHorizontal: 10 }}>
-                <SelectCustom setSelectedStatus={setSelectedStatus} />
+                <SelectCustom setSelectedStatus={setSelectedStatus} title={title}/>
             </View>
         </>
     )
@@ -47,8 +47,10 @@ const FilterStatus = ({ setSelectedStatus }: any) => {
 const SearchContainer = ({ title, setSelectedStatus, setSelectedSearch }: SearchContainerProps) => {
     return (
         <Card containerStyle={styles.cardContainer}>
-            <FilterSearch setSelectedSearch={setSelectedSearch} title={title} />
-            <FilterStatus setSelectedStatus={setSelectedStatus} />
+            <View style={{ paddingTop: 5, marginBottom: -10 }}>
+                <FilterSearch setSelectedSearch={setSelectedSearch} title={title} />
+            </View>
+            <FilterStatus setSelectedStatus={setSelectedStatus} title={title}/>
         </Card>
     )
 }
@@ -56,8 +58,7 @@ const SearchContainer = ({ title, setSelectedStatus, setSelectedSearch }: Search
 const styles = StyleSheet.create({
     cardContainer: {
         borderRadius: 10,
-        padding: 0,
-        paddingTop: 10,
+        padding: 5,
         height: 195
     },
     iconContainer: {

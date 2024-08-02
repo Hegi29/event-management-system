@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Card, Icon, Image, ListItem, Text } from "@rneui/themed";
 
@@ -30,10 +30,10 @@ const ChevronIcon = () => {
 
 const ListItemContentBody = ({ data }: any) => {
     return (
-        <>
+        <View style={{ padding: 0, width: 350 }}>
             {data.length > 0 && <EventListContainer data={data} />}
             {data.length === 0 && <Text style={{ textAlign: 'center', fontWeight: 'semibold' }}>No Data</Text>}
-        </>
+        </View>
     )
 }
 
@@ -78,11 +78,9 @@ const styles = StyleSheet.create({
         padding: 0
     },
     chipButton: {
-        backgroundColor: '#FEE4E2',
+        backgroundColor: '#ABEFC6',
         borderStyle: 'solid',
-        borderColor: '#F04438',
-        padding: 0,
-        paddingRight: 20
+        borderColor: '#067647'
     },
     date: {
         color: '#099057',
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     heading: {
-        fontSize: 14,
+        fontSize: 17,
         fontWeight: 'bold'
     },
     image: {
@@ -121,7 +119,8 @@ const styles = StyleSheet.create({
         paddingLeft: 0
     },
     listItemBodyContainer: {
-        paddingTop: 0
+        paddingTop: 0,
+        borderRadius: 20
     },
     listItemContentContainer: {
         flexDirection: 'row',
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
     },
     province: {
         color: '#636363',
-        marginVertical: 10
+        marginVertical: 5
     },
     submitDate: {
         textAlign: 'center',

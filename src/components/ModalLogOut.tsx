@@ -1,7 +1,7 @@
-import { View } from "react-native"
+import { View } from "react-native";
 
-import { Button, Text } from "@rneui/themed"
-import Modal from "react-native-modal"
+import { Button, Text } from "@rneui/themed";
+import Modal from "react-native-modal";
 
 const ModalLogOut = ({ isModalVisible, handleLogOut, handleOkLogout }: any) => {
     return (

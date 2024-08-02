@@ -32,13 +32,15 @@ const styles = StyleSheet.create({
         width: 180,
         borderRadius: 10,
         borderColor: '#000',
-        backgroundColor: '#0D5B95'
+        backgroundColor: '#0D5B95',
+        height: 50
     },
     buttonExport: {
-        width: 145,
+        width: 140,
         marginRight: 5,
         borderRadius: 10,
-        borderColor: '#000'
+        borderColor: '#000',
+        height: 50
     },
     buttonWrapper: {
         flexDirection: 'row',

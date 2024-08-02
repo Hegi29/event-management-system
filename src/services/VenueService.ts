@@ -1,8 +1,11 @@
 import axios from "axios";
 
 import { BASE_URL, TIMEOUT_AXIOS } from "../constants";
+import { storage } from "../utils/Storage";
 
 axios.defaults.timeout = TIMEOUT_AXIOS;
+
+const email = storage.getString('user.email');
 
 const CreateVenue = async (data: any) => {
     const url = `${BASE_URL}/Venue/Create`;
@@ -36,7 +39,8 @@ const UpdateAllVenueExpiredStatus = async (data: any) => {
 
 const GetVenueList = async (param: any) => {
     try {
-        const url = `${BASE_URL}/Venue/GetVenueList?isDraft=${param.isDraft}&status=${param.status}&pageSize=${param.pageSize}&pageNumber=${param.pageNumber}`;
+        const query = `isDraft=${param.isDraft}&status=${param.status}&pageSize=${param.pageSize}&pageNumber=${param.pageNumber}&keyword=${param.keyword}&email=${email}`;
+        const url = `${BASE_URL}/Venue/GetVenueList?${query}`;
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
@@ -44,9 +48,20 @@ const GetVenueList = async (param: any) => {
     }
 };
 
-const GetVenueStatusList = async (param: any) => {
+const GetVenueStatusList = async () => {
     try {
-        const url = `${BASE_URL}/Venue/GetAllVenueStatus`;
+        const url = `${BASE_URL}/Venue/GetAllVenueStatus?email=${email}`;
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const GetTopVenueList = async (param: any) => {
+    try {
+        const query = `pageSize=${param.pageSize}&pageNumber=${param.pageNumber}`;
+        const url = `${BASE_URL}/Venue/GetTopVenueList?${query}`;
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
@@ -60,5 +75,6 @@ export {
     GetVenueStatusList,
     UpdateVenue,
     UpdateAllVenueExpiredStatus,
-    GetVenueList
+    GetVenueList,
+    GetTopVenueList
 };

@@ -1,24 +1,32 @@
-import { Avatar, Image, Text } from "@rneui/themed";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { LogOutImage } from "../../assets/images";
+import { Avatar, Image, Text } from "@rneui/themed";
+
+import { LogoutImage } from "../../assets/images";
+import { storage } from "../../utils/Storage";
 
 const BottomNavigation = ({ handleLogOut }: any) => {
+    const photoUser = storage.getString('user.photo')
+    const fullName = storage.getString('user.fullname')
+    const role = storage.getString('user.rolename')
+
     return (
-        <View style={{ ...styles.containerHeader, marginTop: 5 }}>
-            <View style={styles.avatarContainer}>
-                <Avatar
-                    containerStyle={styles.avatar}
-                    size={32}
-                    rounded
-                    source={{ uri: "https://randomuser.me/api/portraits/men/36.jpg" }}
-                />
-                <Text style={styles.username}>Olivia Rhye</Text>
-                <Text style={styles.role}>User</Text>
+        <View style={{position: 'absolute', bottom: 0}}>
+            <View style={styles.containerHeader}>
+                <View style={styles.avatarContainer}>
+                    <Avatar
+                        containerStyle={styles.avatar}
+                        size={40}
+                        rounded
+                        source={{ uri: photoUser }}
+                    />
+                    <Text style={styles.username}>{fullName}</Text>
+                    <Text style={styles.role}>{role}</Text>
+                </View>
+                <TouchableOpacity onPress={handleLogOut}>
+                    <Image source={LogoutImage} style={{ ...styles.logo }} />
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.containerImage} onPress={handleLogOut}>
-                <Image source={LogOutImage} style={{ ...styles.logo }} />
-            </TouchableOpacity>
         </View>
     )
 }
@@ -31,19 +39,23 @@ const styles = StyleSheet.create({
         marginLeft: 10
     },
     containerHeader: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20
     },
     containerImage: {
         backgroundColor: '#fff',
         marginLeft: 50,
-        padding: 5,
-        borderRadius: 5
+        paddingHorizontal: 0,
+        paddingVertical: 8,
+        borderRadius: 5,
+        marginRight: 15
     },
     logo: {
         marginLeft: 15,
-        marginRight: 10,
-        height: 30,
-        width: 30
+        marginRight: 15,
+        height: 36,
+        width: 36
     },
     username: {
         color: 'white',
