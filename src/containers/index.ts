@@ -3,11 +3,11 @@ import CreateEventHeadContainer from "./CreateEventHeadContainer";
 import CreateVenueBodyContainer from "./CreateVenueBodyContainer";
 import CreateVenueHeadContainer from "./CreateVenueHeadContainer";
 import EventDraftListBodyContainer from "./EventDraftListBodyContainer";
-import EventDraftListContainer from "./EventDraftListContainer";
 import EventDraftListHeadContainer from "./EventDraftListHeadContainer";
 import EventListBodyContainer from "./EventListBodyContainer";
 import EventListContainer from "./EventListContainer";
 import EventListHeadContainer from "./EventListHeadContainer";
+import LoginContainer from "./LoginContainer";
 import ReportBodyContainer from "./ReportBodyContainer";
 import ReportHeadContainer from "./ReportHeadContainer";
 import SearchContainer from "./SearchContainer";
@@ -26,9 +26,9 @@ export {
     EventListContainer,
     EventListHeadContainer,
     EventListBodyContainer,
-    EventDraftListContainer,
     EventDraftListBodyContainer,
     EventDraftListHeadContainer,
+    LoginContainer,
     ReportBodyContainer,
     ReportHeadContainer,
     SearchContainer,

@@ -9,7 +9,7 @@ import { SUBTITLE_EVENT, TITLE_VENUE } from "../constants";
 import { VenueDashboard } from "../components";
 
 const VenueListHeadContainer = ({ dashboardData }: any) => {
-    const navigation = useNavigation();
+    const navigation = useNavigation() as any;
 
     return (
         <Card containerStyle={styles.cardContainer}>
@@ -17,7 +17,7 @@ const VenueListHeadContainer = ({ dashboardData }: any) => {
             <Text style={styles.subtitle}>{SUBTITLE_EVENT}</Text>
             <View style={styles.buttonWrapper}>
                 <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-                <Button title="Add New Venue" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateVenue' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+                <Button title="Add New Venue" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateVenue')} icon={<Icon name="add" size={24} color="#fff" />} />
             </View>
             <VenueDashboard dashboardData={dashboardData} />
         </Card>

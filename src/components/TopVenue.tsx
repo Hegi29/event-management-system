@@ -28,7 +28,7 @@ const IconChevron = () => {
     )
 }
 
-const ListItemBodyContent = ({ data }: any) => {
+const ListItemBodyContent = ({ data, totalItemRequest, handleShowMoreTopVenue }: any) => {
     const navigation = useNavigation();
 
     return (
@@ -105,11 +105,13 @@ const ListItemBodyContent = ({ data }: any) => {
                     <Text style={styles.updatedDate}>{item.created}</Text>
                 </Card>
             ))}
+             {data.length === 0 && <Text style={{ textAlign: 'center', fontWeight: 'semibold' }}>No Data</Text>}
+            {totalItemRequest > data.length && <Button title='Show More' buttonStyle={{ borderRadius: 13, marginTop: 15, width: '50%' }} containerStyle={{ alignItems: 'center' }} onPress={handleShowMoreTopVenue} />}
         </View>
     )
 }
 
-const TopVenue = ({ data }: any) => {
+const TopVenue = ({ data, totalItemRequest, handleShowMoreTopVenue }: any) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -129,7 +131,7 @@ const TopVenue = ({ data }: any) => {
             >
                 <ListItem containerStyle={styles.listItemBodyContainer}>
                     <ListItem.Content>
-                        <ListItemBodyContent data={data} />
+                        <ListItemBodyContent data={data} totalItemRequest={totalItemRequest} handleShowMoreTopVenue={handleShowMoreTopVenue} />
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>

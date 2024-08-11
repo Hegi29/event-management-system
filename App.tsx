@@ -2,17 +2,19 @@ import './gesture-handler';
 
 import React from 'react';
 
-import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
 
 import DrawerNavigation from './src/components/navigation/DrawerNavigation';
+import { store } from './src/redux/store';
 
 function App(): React.JSX.Element {
-  const navigationRef = useNavigationContainerRef();
-
   return (
-    <NavigationContainer ref={navigationRef}>
-      <DrawerNavigation navigationRef={navigationRef} />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <DrawerNavigation />
+      </NavigationContainer>
+    </Provider>
   );
 }
 

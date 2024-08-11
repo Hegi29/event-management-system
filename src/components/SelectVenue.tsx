@@ -11,6 +11,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CalendarImage, ChangeImage, CheckedImage, DeleteImage, PhoneImage, RingImage, SelectVenueImage } from '../assets/images';
 
 import ModalSelectVenue from './ModalSelectVenue';
+import { setIsCreateNewVenue } from '../redux/reducers/urlParamSlice';
+import { useDispatch } from 'react-redux';
 
 const iconOptions = {
     name: 'circle',
@@ -19,7 +21,10 @@ const iconOptions = {
     color: '#067647'
 };
 
-const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: any) => {
+type SelectVenueProps = { dataVenue: any, setIsAlreadySelectVenue: any, setCurrentVenue: any, setSelectedSearch: any, setSelectedVenueID: any };
+
+const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue, setSelectedSearch, setSelectedVenueID }: SelectVenueProps) => {
+    const dispatch = useDispatch();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedVenue, setSelectedVenue] = useState(null) as any;
 
@@ -28,11 +33,12 @@ const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: an
     }
 
     const handleOk = (item: any) => {
-        console.log('item: ', item);
         setSelectedVenue(item);
         setCurrentVenue(item);
+        setSelectedVenueID(item.venueId);
         setIsModalVisible(!isModalVisible);
         setIsAlreadySelectVenue(true);
+        dispatch(setIsCreateNewVenue(false));
     }
 
     const handleDelete = () => {
@@ -46,11 +52,16 @@ const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: an
         setIsAlreadySelectVenue(false);
         toggleSelectVenue();
         setCurrentVenue(null);
+        setSelectedSearch('');
+    }
+
+    const closeModal = () => {
+        setIsModalVisible(false);
     }
 
     return (
         <>
-            <ModalSelectVenue isModalVisible={isModalVisible} handleOk={handleOk} dataVenue={dataVenue} />
+            <ModalSelectVenue isModalVisible={isModalVisible} handleOk={handleOk} closeModal={closeModal} dataVenue={dataVenue} setSelectedSearch={setSelectedSearch} />
             <View style={styles.mainBody}>
                 {!selectedVenue &&
                     <Card containerStyle={{ borderRadius: 10, marginHorizontal: 0 }}>
@@ -65,12 +76,7 @@ const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: an
                             </Text>
                         </View>
                         <Text
-                            style={{
-                                fontSize: 15,
-                                marginTop: 7,
-                                textAlign: 'center',
-                                color: '#475467'
-                            }}>
+                            style={styles.venueDesc}>
                             Venues that are verified and meet the required standards
                         </Text>
                         <View style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }}>
@@ -86,19 +92,19 @@ const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: an
                         <Image source={{ uri: selectedVenue.images[0].data }} resizeMode='cover' style={styles.image} />
                         <Text style={styles.heading}>{selectedVenue.venueName}</Text>
                         <Text style={styles.province}>{selectedVenue.subDistric}, {selectedVenue.province}</Text>
-                        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                        <View style={styles.containerImageText}>
                             <View style={{ flexDirection: 'row', marginRight: 10 }}>
-                                <Image source={PhoneImage} style={{ height: 20, width: 20, marginRight: 5, marginTop: 3 }} />
+                                <Image source={PhoneImage} style={{ height: 20, width: 20, marginRight: 5, marginTop: 5 }} />
                                 <Text style={{ ...styles.province, paddingTop: 0 }}>{selectedVenue.phoneNumber}</Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Image source={CalendarImage} style={{ height: 20, width: 20, marginRight: 5, marginTop: 3 }} />
+                                <Image source={CalendarImage} style={{ height: 20, width: 20, marginRight: 5, marginTop: 5 }} />
                                 <Text style={styles.province}>{selectedVenue?.totalUsed ?? 0} total used</Text>
                             </View>
                         </View>
                         {selectedVenue.verified &&
-                            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                                <Image source={CheckedImage} style={{ height: 20, width: 20, marginRight: 5 }} />
+                            <View style={styles.containerImageText}>
+                                <Image source={CheckedImage} style={styles.verifiedImage} />
                                 <Text style={styles.province}>Verified on {selectedVenue.verified}</Text>
                             </View>}
                         {selectedVenue?.badges?.map((items: any) => (
@@ -112,15 +118,15 @@ const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: an
                                 buttonStyle={styles.chipButton}
                             />
                         ))}
-                        <View style={{ marginTop: 10, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                            <Button buttonStyle={{ borderRadius: 10, backgroundColor: '#0D5B95', width: '100%', marginTop: 10 }} onPress={handleChange}>
-                                <Image source={ChangeImage} style={{ height: 20, width: 20, marginRight: 5 }} />Change Venue
+                        <View style={styles.changeVenueContainer}>
+                            <Button buttonStyle={styles.buttonChangeVenue} onPress={handleChange}>
+                                <Image source={ChangeImage} style={styles.changeImage} />Change Venue
                             </Button>
                         </View>
-                        <View style={{ flexDirection: 'row', marginBottom: 10, justifyContent: 'center', marginTop: 20 }}>
-                            <Image source={DeleteImage} style={{ height: 20, width: 20, marginRight: 5 }} />
+                        <View style={styles.buttonDeleteContainer}>
+                            <Image source={DeleteImage} style={styles.deleteImage} />
                             <TouchableOpacity onPress={handleDelete}>
-                                <Text style={{ color: '#636363', paddingTop: 2 }}>Delete</Text>
+                                <Text style={styles.titleButtonDelete}>Delete</Text>
                             </TouchableOpacity>
                         </View>
                     </Card>
@@ -131,11 +137,8 @@ const SelectVenue = ({ dataVenue, setIsAlreadySelectVenue, setCurrentVenue }: an
 };
 
 const styles = StyleSheet.create({
-    mainBody: {
-        flex: 1,
-        justifyContent: 'center',
-        marginBottom: 20
-    },
+    buttonChangeVenue: { borderRadius: 10, backgroundColor: '#0D5B95', width: '100%', marginTop: 10 },
+    buttonDeleteContainer: { flexDirection: 'row', marginBottom: 10, justifyContent: 'center', marginTop: 20 },
     buttonStyle: {
         backgroundColor: '#307ecc',
         borderWidth: 0,
@@ -153,17 +156,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         fontSize: 16,
     },
-    textStyle: {
-        backgroundColor: '#fff',
-        fontSize: 15,
-        marginTop: 16,
-        marginLeft: 35,
-        marginRight: 35,
-        textAlign: 'center',
-    },
-    viewContainer: {
-        marginVertical: 5
-    },
     button: {
         borderRadius: 8,
         marginVertical: 10
@@ -174,6 +166,9 @@ const styles = StyleSheet.create({
     card: {
         borderRadius: 20
     },
+    containerImageText: { flexDirection: 'row', marginBottom: 10 },
+    changeImage: { height: 20, width: 20, marginRight: 5 },
+    changeVenueContainer: { marginTop: 10, display: 'flex', flexDirection: 'row', justifyContent: 'center' },
     chipButton: {
         backgroundColor: '#FEE4E2',
         borderStyle: 'solid',
@@ -181,6 +176,7 @@ const styles = StyleSheet.create({
         padding: 0,
         paddingRight: 20
     },
+    deleteImage: { height: 25, width: 20, marginRight: 5 },
     date: {
         color: '#099057',
         fontWeight: 'bold',
@@ -215,6 +211,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 5
     },
+    mainBody: {
+        flex: 1,
+        justifyContent: 'center',
+        marginBottom: 20
+    },
     province: {
         color: '#636363',
         marginVertical: 5
@@ -222,7 +223,26 @@ const styles = StyleSheet.create({
     submitDate: {
         textAlign: 'center',
         color: '#636363'
-    }
+    },
+    textStyle: {
+        backgroundColor: '#fff',
+        fontSize: 15,
+        marginTop: 16,
+        marginLeft: 35,
+        marginRight: 35,
+        textAlign: 'center',
+    },
+    titleButtonDelete: { color: '#636363', paddingTop: 3, fontWeight: 'bold' },
+    venueDesc: {
+        fontSize: 15,
+        marginTop: 7,
+        textAlign: 'center',
+        color: '#475467'
+    },
+    verifiedImage: { height: 20, width: 20, marginRight: 5, marginTop: 5 },
+    viewContainer: {
+        marginVertical: 5
+    },
 });
 
 export default SelectVenue;

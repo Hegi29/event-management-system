@@ -1,57 +1,293 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
 import { Divider, Input, Text, Button, Image } from '@rneui/themed';
-import Modal from 'react-native-modal';
+import { useNavigation, useScrollToTop } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import RNFS from 'react-native-fs';
+import { Controller, useForm } from 'react-hook-form';
+import MaskInput from 'react-native-mask-input';
+import axios from 'axios';
 
-import { CheckedImage, ExcelFileImage, ImageFileImage, WarningFileImage } from '../../assets/images';
-import getLengthProgress from '../../utils/Progress';
+//perlu dialiaskan supaya pathnya pendek
+import { selectAccount } from '../../redux/reducers/accountSlice';
+import { selectCreateEvent, setVenueID } from '../../redux/reducers/createEventSlice';
+import { MASKING_PHONE_NO, REGEX_EMAIL } from '../../constants';
+import { CreateVenue } from '../../services/VenueService';
+import { ERR_MESSAGE_UPLOAD_VENUE_IMAGE } from '../../constants/message';
 
 import DividerTextMiddle from '../DividerTextMiddle';
-import SelectSection from '../SelectSection';
-import SelectStatus from '../SelectStatus';
 import ImageUpload from '../ImageUpload';
 import SelectVenue from '../SelectVenue';
+import ModalSave from '../ModalSave';
+import ListAttachment from '../ListAttachment';
+import QuestionAnswered from '../QuestionAnswered';
+import ModalError from '../ModalError';
+import ModalSuccess from '../ModalSuccess';
+import { setIsCreateNewVenue } from '../../redux/reducers/urlParamSlice';
 
-type VenueDetailTabProps = { index: number, setIndex: any, isDraft?: boolean, dataVenue: any, tipe: string };
+const defaultValues = {
+    venueName: '',
+    address: '',
+    province: '',
+    city: '',
+    district: '',
+    village: '',
+    phoneNumber: '',
+    email: '',
+    images: '',
+    nameRS: '',
+    emailRS: '',
+    phoneNumberRS: '',
+    namePolisi: '',
+    emailPolisi: '',
+    phoneNumberPolisi: '',
+    nameDamkar: '',
+    emailDamkar: '',
+    phoneNumberDamkar: ''
+};
 
-const VenueDetailTab = ({ setIndex, isDraft, dataVenue, tipe }: VenueDetailTabProps) => {
+
+const VenueDetailTab = ({ index, dataVenue, setIndex, isDraft, tipe, setSelectedSearch, setSelectedVenueID, setSelectedSection, allEvidenceList, setNoTabValid }: any) => {
+    const accountData = useSelector(selectAccount);
+    const eventDetailData = useSelector(selectCreateEvent);
+    console.log("🚀 ~ VenueDetailTab ~ eventDetailData:", eventDetailData)
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+    const {
+        control,
+        handleSubmit,
+        setValue,
+        getValues,
+        setError,
+        clearErrors,
+        reset,
+        formState: { errors }
+    } = useForm({
+        defaultValues,
+        mode: 'onBlur'
+    });
+
+    const ref = useRef(null);
+    useScrollToTop(ref);
+
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalAlertVisible, setIsModalAlertVisible] = useState(false);
+    const [isModalSuccessVisible, setIsModalSuccessVisible] = useState(false);
     const [isAlreadySelectVenue, setIsAlreadySelectVenue] = useState(false);
     const [currentVenue, setCurrentVenue] = useState(null) as any;
+    const [uploadedImageVenue, setUploadedImageVenue] = useState(null) as any;
+    const [errorImageVenue, setErrorImageVenue] = useState('');
+    const [base64Image, setBase64Image] = useState('');
 
-    const handleNext = () => {
+    const email = accountData.account.actualemail;
+    const eventId = eventDetailData?.createEvent?.eventDetail?.eventId;
+
+    const dataMapper = (values: any) => {
+        const obj = {
+            eventId,
+            venueName: values.venueName,
+            email: values.email,
+            phoneNumber: values.phoneNumber,
+            address: {
+                address: values.address,
+                province: values.province,
+                city: values.city,
+                district: values.district,
+                village: values.village,
+            },
+            contacts: [
+                {
+                    name: values.nameRS,
+                    email: values.emailRS,
+                    phoneNumber: values.phoneNumberRS,
+                    contactType: "Rumah Sakit Terdekat"
+                },
+                {
+                    name: values.namePolisi,
+                    email: values.emailPolisi,
+                    phoneNumber: values.phoneNumberPolisi,
+                    contactType: "Kantor Polisi Terdekat"
+                },
+                {
+                    name: values.nameDamkar,
+                    email: values.emailDamkar,
+                    phoneNumber: values.phoneNumberDamkar,
+                    contactType: "Pemadam Kebakaran Terdekat"
+                }
+            ],
+            images: [
+                {
+                    data: base64Image,
+                    type: uploadedImageVenue[0].type
+                }
+            ],
+            createdBy: email,
+            baseUrl: ''
+        }
+
+        return obj;
+    }
+
+    const handleNext = (data: any) => {
+        if (!currentVenue && !uploadedImageVenue) {
+            setErrorImageVenue(ERR_MESSAGE_UPLOAD_VENUE_IMAGE);
+            setIsModalAlertVisible(!isModalVisible);
+            setError('images', { type: 'required', message: ERR_MESSAGE_UPLOAD_VENUE_IMAGE });
+            return;
+        }
+
+        console.log("🚀 ~ handleNext ~ currentVenue:", currentVenue)
+
+        if (!currentVenue) {
+            dispatch(setIsCreateNewVenue(true));
+        } else {
+            dispatch(setIsCreateNewVenue(false));
+            dispatch(setVenueID(currentVenue.venueId));
+        }
+
+        let obj = {};
+        if (!currentVenue) {
+            obj = dataMapper(data);
+            // console.log("🚀 ~ handleNext ~ obj:", obj);
+        }
+
+        handleOkSuccess(currentVenue ? {} : obj);
+
+        const validTab = [0, 1, 2];
+        setNoTabValid(validTab);
+    }
+
+    const handleOkSuccess = async (obj: any) => {
+        // disini tinggal HIT API dapetin event id
+        let venueId = '';
+
+        // const response = await CreateVenue(obj) as any;
+        // if (response?.data?.status === axios.HttpStatusCode.Ok) {
+        //     venueId = response.logVenueId;
+
+        //     // setor dulu ke redux dari hit api
+        //     dispatch(setVenueID(venueId));
+
+        //     // tampilin modal jika sukses
+        setIsModalSuccessVisible(!isModalSuccessVisible);
+
+        //     // next ke step selanjutnya
+        //     setIndex(tipe !== 'venue' ? 2 : 1);
+        // }
+
         setIndex(tipe !== 'venue' ? 2 : 1);
+    }
+
+    const handleOkModal = () => {
+        setIsModalAlertVisible(!isModalAlertVisible);
     }
 
     const handlePrev = () => {
         setIndex(0);
+        // perlu flag menandakan perintah untuk get ulang data di event detail?
     }
 
     const handleSave = () => {
         setIsModalVisible(!isModalVisible);
     }
 
-    const save = () => {
+    const save = async () => {
         setIsModalVisible(!isModalVisible);
+        const data = getValues();
+        const obj = dataMapper(data);
+        //aksi ini hanya ada di event draft
+        //behaviour mirip dengan next, simpan data kembali
+        const response = await CreateVenue(obj) as any;
+        if (response?.data?.status === axios.HttpStatusCode.Ok) {
+            // tampilin modal jika sukses
+            setIsModalSuccessVisible(!isModalSuccessVisible);
+
+            // keluar ke event draft list
+            navigation.navigate('EventDraft' as never);
+        } else {
+            // seharusnya pakai modal error
+            setIsModalAlertVisible(!isModalAlertVisible);
+        }
     }
 
     const discard = () => {
         setIsModalVisible(!isModalVisible);
+        // belum tau seperti apa behaviournya
     }
 
+    const handleUploadFile = (value: any) => {
+        if (!value) {
+            setUploadedImageVenue(null);
+            setBase64Image('');
+            setError('images', { type: 'required', message: 'This is required.' });
+            return;
+        }
+
+        const image = value.file;
+        const URI = value.file[0].uri;
+
+        setUploadedImageVenue(image);
+        convertImageToBase64(URI);
+    }
+
+    const convertImageToBase64 = (URI: any) => {
+        RNFS.readFile(URI, 'base64').then((res) => {
+            setBase64Image(res);
+            setValue('images', res);
+            clearErrors('images');
+        });
+    }
+
+    const extractEmergencyContactListsData = (contactType: string, key: string) => {
+        const res = currentVenue.emergencyContactLists.find((x: any) => x.contactType === contactType);
+        if (res) {
+            return res[key];
+        }
+
+        return '';
+    }
+
+    useEffect(() => {
+        if (!uploadedImageVenue) {
+            setError('images', { type: 'required', message: ERR_MESSAGE_UPLOAD_VENUE_IMAGE });
+        }
+    }, [uploadedImageVenue]);
+
+    useEffect(() => {
+        setSelectedSection('VenueDetail');
+    }, []);
+
+    useEffect(() => {
+        if (currentVenue) {
+            setValue('venueName', currentVenue?.venueName);
+            setValue('address', currentVenue?.venueName);
+            setValue('province', currentVenue?.province);
+            setValue('city', currentVenue?.subDistric);
+            setValue('district', currentVenue?.urbanVillage);
+            setValue('village', currentVenue?.neighbourhood);
+            setValue('phoneNumber', currentVenue?.phoneNumber);
+            setValue('email', currentVenue?.email);
+            setValue('images', currentVenue?.images[0].data);
+            setValue('nameRS', extractEmergencyContactListsData("Rumah Sakit Terdekat", "name"));
+            setValue('emailRS', extractEmergencyContactListsData("Rumah Sakit Terdekat", "email"));
+            setValue('phoneNumberRS', extractEmergencyContactListsData("Rumah Sakit Terdekat", "phoneNumber"));
+            setValue('namePolisi', extractEmergencyContactListsData("Kantor Polisi Terdekat", "name"));
+            setValue('emailPolisi', extractEmergencyContactListsData("Kantor Polisi Terdekat", "email"));
+            setValue('phoneNumberPolisi', extractEmergencyContactListsData("Kantor Polisi Terdekat", "phoneNumber"));
+            setValue('nameDamkar', extractEmergencyContactListsData("Pemadam Kebakaran Terdekat", "name"));
+            setValue('emailDamkar', extractEmergencyContactListsData("Pemadam Kebakaran Terdekat", "email"));
+            setValue('phoneNumberDamkar', extractEmergencyContactListsData("Pemadam Kebakaran Terdekat", "phoneNumber"));
+        } else {
+            reset();
+        }
+    }, [currentVenue]);
+
     return (
-        <View>
-            <Modal isVisible={isModalVisible} style={{ height: 50 }}>
-                <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10 }}>Unsaved changes</Text>
-                    <Text>Do you want to save or discard changes?</Text>
-                    <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                        <Button buttonStyle={{ borderRadius: 10 }} type="outline" onPress={discard}>Discard</Button>
-                        <Button buttonStyle={{ borderRadius: 10, backgroundColor: '#0D5B95' }} containerStyle={{ marginLeft: 5 }} onPress={save}>Save changes</Button>
-                    </View>
-                </View>
-            </Modal>
+        <View ref={ref}>
+            <ModalError isModalVisible={isModalAlertVisible} handleOk={handleOkModal} message={errorImageVenue} statusCode={400} />
+            <ModalSave isModalVisible={isModalVisible} discard={discard} save={save} />
+            <ModalSuccess isModalVisible={isModalSuccessVisible} handleOk={handleOkModal} message={'Data Saved Successfull'} />
             <View style={{ padding: 10 }}>
                 <Text h4 style={{ fontWeight: 'bold', marginTop: 20, marginBottom: 10 }}>Venue Detail</Text>
                 <Text style={{ marginBottom: 20 }}>Please fill in the required data</Text>
@@ -62,7 +298,7 @@ const VenueDetailTab = ({ setIndex, isDraft, dataVenue, tipe }: VenueDetailTabPr
                     <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Select Venue</Text>
                     <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
                 </View>
-                <SelectVenue dataVenue={dataVenue} setIsAlreadySelectVenue={setIsAlreadySelectVenue} setCurrentVenue={setCurrentVenue} />
+                <SelectVenue dataVenue={dataVenue} setIsAlreadySelectVenue={setIsAlreadySelectVenue} setCurrentVenue={setCurrentVenue} setSelectedSearch={setSelectedSearch} setSelectedVenueID={setSelectedVenueID} />
                 {!isAlreadySelectVenue && <DividerTextMiddle title='Or' />}
                 {!isAlreadySelectVenue && <Text style={{ fontWeight: 'bold', marginVertical: 20 }}>Add New Venue</Text>}
                 <Divider />
@@ -70,25 +306,98 @@ const VenueDetailTab = ({ setIndex, isDraft, dataVenue, tipe }: VenueDetailTabPr
                     <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama Venue</Text>
                     <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
                 </View>
-                <Input placeholder='Input nama venue...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.venueName} disabled={currentVenue?.venueName} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    defaultValue={currentVenue?.venueName}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <Input
+                            placeholder='Input nama venue...'
+                            inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.venueName ? '#F9FAFB' : '#fff', borderColor: errors.venueName ? 'red' : '#D0D5DD' }}
+                            containerStyle={{ paddingHorizontal: 0 }}
+                            disabled={currentVenue?.venueName}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                        />
+                    )}
+                    name="venueName"
+                />
+                {errors.venueName ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 20 }}>{errors.venueName.message}</Text> : null}
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Alamat Venue</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Input alamat venue..' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0, marginBottom: -20 }} value={currentVenue?.venueAddress} disabled={currentVenue?.venueAddress} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Alamat Venue</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Input alamat venue..'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.venueAddress ? '#F9FAFB' : '#fff', borderColor: errors.address ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0, marginBottom: -20 }}
+                                disabled={currentVenue?.venueAddress}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                        </>
+                    )}
+                    name="address"
+                />
+                {errors.address ? <Text style={{ color: 'red', marginTop: 0 }}>{errors.address.message}</Text> : null}
+
                 <View style={{
                     display: "flex",
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     marginBottom: -20
                 }}>
-                    <View style={{ width: '49%' }}>
-                        <Input placeholder='Input provinsi..' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.province} disabled={currentVenue?.province} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
-                    </View>
-                    <View style={{ width: '49%' }}>
-                        <Input placeholder='Input kecamatan..' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.subDistric} disabled={currentVenue?.subDistric} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
-                    </View>
+                    <Controller
+                        control={control}
+                        rules={{ required: { value: true, message: 'This is required' } }}
+                        render={({ field: { onChange, onBlur, value } }: any) => (
+                            <View style={{ width: '49%' }}>
+                                <Input
+                                    placeholder='Input provinsi..'
+                                    inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.province ? '#F9FAFB' : '#fff', borderColor: errors.province ? 'red' : '#D0D5DD' }}
+                                    containerStyle={{ paddingHorizontal: 0 }}
+                                    disabled={currentVenue?.province}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                                {errors.province ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 20 }}>This is required.</Text> : null}
+                            </View>
+                        )}
+                        name="province"
+                    />
+
+                    <Controller
+                        control={control}
+                        rules={{ required: { value: true, message: 'This is required' } }}
+                        render={({ field: { onChange, onBlur, value } }: any) => (
+                            <View style={{ width: '49%' }}>
+                                <Input
+                                    placeholder='Input kecamatan..'
+                                    inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.subDistric ? '#F9FAFB' : '#fff', borderColor: errors.city ? 'red' : '#D0D5DD' }}
+                                    containerStyle={{ paddingHorizontal: 0 }}
+                                    disabled={currentVenue?.subDistric}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                                {errors.city ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 20 }}>This is required.</Text> : null}
+                            </View>
+                        )}
+                        name="city"
+                    />
+
                 </View>
 
                 <View style={{
@@ -96,197 +405,381 @@ const VenueDetailTab = ({ setIndex, isDraft, dataVenue, tipe }: VenueDetailTabPr
                     flexDirection: 'row',
                     justifyContent: 'space-between'
                 }}>
-                    <View style={{ width: '49%' }}>
-                        <Input placeholder='Input kelurahan..' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.urbanVillage} disabled={currentVenue?.urbanVillage} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
-                    </View>
-                    <View style={{ width: '49%' }}>
-                        <Input placeholder='Input RT/RW..' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.neighbourhood} disabled={currentVenue?.neighbourhood} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
-                    </View>
+                    <Controller
+                        control={control}
+                        rules={{ required: { value: true, message: 'This is required' } }}
+                        render={({ field: { onChange, onBlur, value } }: any) => (
+                            <View style={{ width: '49%' }}>
+                                <Input
+                                    placeholder='Input kelurahan..'
+                                    inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.urbanVillage ? '#F9FAFB' : '#fff', borderColor: errors.district ? 'red' : '#D0D5DD' }}
+                                    containerStyle={{ paddingHorizontal: 0 }}
+                                    disabled={currentVenue?.urbanVillage}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                                {errors.district ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                            </View>
+                        )}
+                        name="district"
+                    />
+
+                    <Controller
+                        control={control}
+                        rules={{ required: { value: true, message: 'This is required' } }}
+                        render={({ field: { onChange, onBlur, value } }: any) => (
+                            <View style={{ width: '49%' }}>
+                                <Input
+                                    placeholder='Input RT/RW..'
+                                    inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.neighbourhood ? '#F9FAFB' : '#fff', borderColor: errors.village ? 'red' : '#D0D5DD' }}
+                                    containerStyle={{ paddingHorizontal: 0 }}
+                                    disabled={currentVenue?.neighbourhood}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    value={value}
+                                />
+                                {errors.village ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                            </View>
+                        )}
+                        name="village"
+                    />
+
                 </View>
+                <Divider />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No Telepon</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <MaskInput
+                                placeholder='Input no telepon..'
+                                editable={!currentVenue}
+                                style={{ ...styles.searchField, marginBottom: 20, backgroundColor: currentVenue?.phoneNumber ? '#F9FAFB' : '#fff', borderColor: errors.phoneNumber ? 'red' : '#D0D5DD' }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                mask={MASKING_PHONE_NO}
+                            />
+                            {errors.phoneNumber ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="phoneNumber"
+                />
 
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No Telepon</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Input no telepon..' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.phoneNumber} disabled={currentVenue?.phoneNumber} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
-                <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Input email...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.email} disabled={currentVenue?.email} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
-                <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Images</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
 
-                <ImageUpload />
+                <Controller
+                    control={control}
+                    rules={{
+                        required: { value: true, message: 'Required' },
+                        pattern: { value: REGEX_EMAIL, message: 'Email invalid' }
+                    }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Input email...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.email ? '#F9FAFB' : '#fff', borderColor: errors.email ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.email}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.email ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>{errors.email.message}</Text> : null}
+                        </>
+                    )}
+                    name="email"
+                />
 
+                <Divider />
+                {!currentVenue &&
+                    <Controller
+                        control={control}
+                        rules={{ required: { value: true, message: ERR_MESSAGE_UPLOAD_VENUE_IMAGE } }}
+                        render={({ field: { onChange, onBlur, value } }: any) => (
+                            <>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Images</Text>
+                                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                                </View>
+                                <ImageUpload tipe='venue image' handleUploadFile={handleUploadFile} />
+                                {errors.images && <Text style={{ color: 'red', marginTop: -10, marginBottom: 10 }}>{errors.images.message}</Text>}
+                            </>
+                        )}
+                        name="images"
+                    />
+                }
                 <Divider />
                 <Text style={{ fontWeight: 'bold', marginVertical: 20, fontSize: 20 }}>List Kontak Darurat</Text>
                 <Divider />
                 <Text style={{ fontWeight: 'bold', marginTop: 20, fontSize: 17 }}>Rumah Sakit Terdekat</Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Input nama...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[0].name} disabled={currentVenue?.emergencyContactLists[0].name} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Input nama...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.emergencyContactLists[0].name ? '#F9FAFB' : '#fff', borderColor: errors.nameRS ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.emergencyContactLists[0].name}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.nameRS ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="nameRS"
+                />
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Alamat email...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[0].email} disabled={currentVenue?.emergencyContactLists[0].email} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{
+                        required: { value: true, message: 'Required' },
+                        pattern: { value: REGEX_EMAIL, message: 'Email invalid' }
+                    }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Alamat email...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.emergencyContactLists[0].email ? '#F9FAFB' : '#fff', borderColor: errors.emailRS ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.emergencyContactLists[0].email}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.emailRS ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>{errors.emailRS.message}</Text> : null}
+                        </>
+                    )}
+                    name="emailRS"
+                />
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No.Telp / HP</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='No.Telp / HP...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[0].phoneNumber} disabled={currentVenue?.emergencyContactLists[0].phoneNumber} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No.Telp / HP</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <MaskInput
+                                placeholder='No.Telp / HP...'
+                                editable={!currentVenue}
+                                style={{ ...styles.searchField, marginBottom: 20, backgroundColor: currentVenue?.emergencyContactLists[0].phoneNumber ? '#F9FAFB' : '#fff', borderColor: errors.phoneNumberRS ? 'red' : '#D0D5DD' }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                mask={MASKING_PHONE_NO}
+                            />
+                            {errors.phoneNumberRS ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="phoneNumberRS"
+                />
+
                 <Divider />
                 <Text style={{ fontWeight: 'bold', marginVertical: 20, fontSize: 20 }}>Kantor Polisi Terdekat</Text>
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Input Nama...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[0].name} disabled={currentVenue?.emergencyContactLists[1].name} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Input Nama...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.emergencyContactLists[1].name ? '#F9FAFB' : '#fff', borderColor: errors.namePolisi ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.emergencyContactLists[1].name}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.namePolisi ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="namePolisi"
+                />
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Alamat email...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[1].email} disabled={currentVenue?.emergencyContactLists[1].email} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{
+                        required: { value: true, message: 'Required' },
+                        pattern: { value: REGEX_EMAIL, message: 'Email invalid' }
+                    }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Alamat email...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.emergencyContactLists[1].email ? '#F9FAFB' : '#fff', borderColor: errors.emailPolisi ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.emergencyContactLists[1].email}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.emailPolisi ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>{errors.emailPolisi.message}</Text> : null}
+                        </>
+                    )}
+                    name="emailPolisi"
+                />
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No.Telp / HP</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='No.Telp / HP' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[1].phoneNumber} disabled={currentVenue?.emergencyContactLists[1].phoneNumber} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No.Telp / HP</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <MaskInput
+                                placeholder='No.Telp / HP'
+                                editable={!currentVenue}
+                                style={{ ...styles.searchField, marginBottom: 20, backgroundColor: currentVenue?.emergencyContactLists[1].phoneNumber ? '#F9FAFB' : '#fff', borderColor: errors.phoneNumberPolisi ? 'red' : '#D0D5DD' }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                mask={MASKING_PHONE_NO}
+                            />
+                            {errors.phoneNumberPolisi ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="phoneNumberPolisi"
+                />
+
                 <Divider />
                 <Text style={{ fontWeight: 'bold', marginVertical: 20, fontSize: 20 }}>Pemadam Kebakaran Terdekat</Text>
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Input nama...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[2].name} disabled={currentVenue?.emergencyContactLists[2].name} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Nama</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Input nama...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.emergencyContactLists[2].name ? '#F9FAFB' : '#fff', borderColor: errors.nameDamkar ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.emergencyContactLists[2].name}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.nameDamkar ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="nameDamkar"
+                />
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='Alamat email...' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[2].email} disabled={currentVenue?.emergencyContactLists[2].email} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{
+                        required: { value: true, message: 'Required' },
+                        pattern: { value: REGEX_EMAIL, message: 'Email invalid' }
+                    }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Email</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <Input
+                                placeholder='Alamat email...'
+                                inputContainerStyle={{ ...styles.searchField, backgroundColor: currentVenue?.emergencyContactLists[2].email ? '#F9FAFB' : '#fff', borderColor: errors.emailDamkar ? 'red' : '#D0D5DD' }}
+                                containerStyle={{ paddingHorizontal: 0 }}
+                                disabled={currentVenue?.emergencyContactLists[2].email}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                            />
+                            {errors.emailDamkar ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>{errors.emailDamkar.message}</Text> : null}
+                        </>
+                    )}
+                    name="emailDamkar"
+                />
+
                 <Divider />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No.Telp / HP</Text>
-                    <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
-                </View>
-                <Input placeholder='No.Telp / HP' inputContainerStyle={styles.searchField} containerStyle={{ paddingHorizontal: 0 }} value={currentVenue?.emergencyContactLists[2].phoneNumber} disabled={currentVenue?.emergencyContactLists[2].phoneNumber} disabledInputStyle={{ backgroundColor: '#D0D5DD' }} />
+
+                <Controller
+                    control={control}
+                    rules={{ required: { value: true, message: 'This is required' } }}
+                    render={({ field: { onChange, onBlur, value } }: any) => (
+                        <>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>No.Telp / HP</Text>
+                                <Text style={{ marginTop: 20, color: 'red' }}>*</Text>
+                            </View>
+                            <MaskInput
+                                placeholder='No.Telp / HP'
+                                editable={!currentVenue}
+                                style={{ ...styles.searchField, marginBottom: 20, backgroundColor: currentVenue?.emergencyContactLists[2].phoneNumber ? '#F9FAFB' : '#fff', borderColor: errors.phoneNumberDamkar ? 'red' : '#D0D5DD' }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                mask={MASKING_PHONE_NO}
+                            />
+                            {errors.phoneNumberDamkar ? <Text style={{ color: 'red', marginTop: -20, marginBottom: 10 }}>This is required.</Text> : null}
+                        </>
+                    )}
+                    name="phoneNumberDamkar"
+                />
+
                 <Divider />
             </View>
 
-            <View style={{ padding: 10 }}>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={{ fontWeight: 'bold', marginVertical: 20, fontSize: 20 }}>Question Answered</Text>
-                    <Text style={{ fontWeight: 'bold', marginVertical: 20, fontSize: 20, color: '#F79009' }}>95/105</Text>
-                </View>
-                <Divider />
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View>
-                        <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Health Section</Text>
-                        <Text style={{ marginTop: 5 }}>30/40 question answered</Text>
-                    </View>
-                    <View style={styles.progressBar}>
-                        <View style={{ backgroundColor: "#1072BA", width: getLengthProgress(30, 40) as any }} />
-                    </View>
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View>
-                        <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Security Section</Text>
-                        <Text style={{ marginTop: 5 }}>10/20 question answered</Text>
-                    </View>
-                    <View style={styles.progressBar}>
-                        <View style={{ backgroundColor: "#1072BA", width: getLengthProgress(10, 20) as any }} />
-                    </View>
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View>
-                        <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Safety Section</Text>
-                        <Text style={{ marginTop: 5 }}>25/30 question answered</Text>
-                    </View>
-                    <View style={styles.progressBar}>
-                        <View style={{ backgroundColor: "#1072BA", width: getLengthProgress(25, 30) as any }} />
-                    </View>
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View>
-                        <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Environment Section</Text>
-                        <Text style={{ marginTop: 5 }}>25/25 question answered</Text>
-                    </View>
-                    <View style={styles.progressBar}>
-                        <View style={{ backgroundColor: "#1072BA", width: getLengthProgress(25, 25) as any }} />
-                    </View>
-                </View>
-            </View>
+            <QuestionAnswered />
+            <ListAttachment allEvidenceList={allEvidenceList} />
 
-            <View style={{ padding: 10 }}>
-                <Text style={{ fontWeight: 'bold', marginVertical: 20, fontSize: 20 }}>Attachment</Text>
-                <Divider />
-                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Status</Text>
-                <SelectStatus />
-                <Text style={{ fontWeight: 'bold', marginTop: 20 }}>Section</Text>
-                <SelectSection />
-            </View>
-
-            <View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Image source={ExcelFileImage} style={styles.image} />
-                        <Text style={{ marginTop: 22, fontWeight: 'bold' }}>A1 - Daftar peserta</Text>
-                    </View>
-                    <Image source={CheckedImage} style={styles.imageStatus} />
-                </View>
-                <Divider style={{ marginHorizontal: 10 }} />
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Image source={ImageFileImage} style={styles.image} />
-                        <Text style={{ marginTop: 22, fontWeight: 'bold' }}>A2 - Foto area akses</Text>
-                    </View>
-                    <Image source={WarningFileImage} style={styles.imageStatus} />
-                </View>
-                <Divider style={{ marginHorizontal: 10 }} />
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Image source={ExcelFileImage} style={styles.image} />
-                        <Text style={{ marginTop: 22, fontWeight: 'bold' }}>A1 - Daftar peserta</Text>
-                    </View>
-                    <Image source={CheckedImage} style={styles.imageStatus} />
-                </View>
-                <Divider style={{ marginHorizontal: 10 }} />
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Image source={ImageFileImage} style={styles.image} />
-                        <Text style={{ marginTop: 22, fontWeight: 'bold' }}>A2 - Foto area akses</Text>
-                    </View>
-                    <Image source={WarningFileImage} style={styles.imageStatus} />
-                </View>
-                <Divider style={{ marginHorizontal: 10 }} />
-            </View>
-
-            <View style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                padding: 0,
-                marginTop: 40
-            }}>
-                <Button type='outline' buttonStyle={{ width: 80, marginRight: 5, borderRadius: 10, borderColor: '#000' }} titleStyle={{ color: '#000' }}>Close</Button>
-                {isDraft && <Button type='outline' buttonStyle={{ width: 80, marginRight: 5, borderRadius: 10, borderColor: '#000' }} titleStyle={{ color: '#000' }} onPress={handleSave}>Save</Button>}
-                {tipe !== 'venue' && <Button type='outline' buttonStyle={{ width: 80, marginRight: 5, borderRadius: 10, borderColor: '#000' }} titleStyle={{ color: '#000' }} onPress={handlePrev}>Prev</Button>}
-                <Button buttonStyle={{ width: 80, borderRadius: 10, backgroundColor: '#0D5B95' }} onPress={handleNext}>Next</Button>
+            <View style={styles.buttonActionContainer}>
+                <Button type='outline' buttonStyle={styles.buttonClose} titleStyle={{ color: '#000' }}>Close</Button>
+                {isDraft && <Button type='outline' buttonStyle={styles.buttonSave} titleStyle={{ color: '#000' }} onPress={handleSave}>Save</Button>}
+                {tipe !== 'venue' && <Button type='outline' buttonStyle={styles.buttonPrev} titleStyle={{ color: '#000' }} onPress={handlePrev}>Prev</Button>}
+                <Button buttonStyle={styles.buttonNext} onPress={handleSubmit(handleNext)}>Next</Button>
             </View>
         </View>
     )
@@ -314,22 +807,43 @@ const styles = StyleSheet.create({
         marginTop: 22,
         marginRight: 10
     },
+    buttonActionContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        padding: 0,
+        marginTop: 40
+    },
+    buttonClose: {
+        width: 80,
+        marginRight: 5,
+        borderRadius: 10,
+        borderColor: '#000'
+    },
     buttonContainer: {
         marginTop: 20
+    },
+    buttonNext: {
+        width: 80,
+        borderRadius: 10,
+        backgroundColor: '#0D5B95'
+    },
+    buttonPrev: {
+        width: 80,
+        marginRight: 5,
+        borderRadius: 10,
+        borderColor: '#000'
+    },
+    buttonSave: {
+        width: 80,
+        marginRight: 5,
+        borderRadius: 10,
+        borderColor: '#000'
     },
     buttonTitle: {
         color: 'white',
         paddingLeft: 10,
         fontWeight: 'bold'
-    },
-    progressBar: {
-        width: '30%',
-        height: 15,
-        backgroundColor: '#EAECF0',
-        borderRadius: 4,
-        flexDirection: "row",
-        marginTop: 30,
-        marginLeft: 5
     },
     searchField: {
         backgroundColor: 'white',

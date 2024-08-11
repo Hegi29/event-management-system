@@ -5,6 +5,8 @@ import { Avatar, Card, Icon, ListItem, Text } from "@rneui/themed";
 
 import { TITLE_HOME_D } from "../constants";
 
+type ListActivityProps = { data: any };
+
 const ListItemHeadContent = () => {
     return (
         <Text style={styles.title}>
@@ -23,7 +25,7 @@ const IconChevron = () => {
     )
 }
 
-const ListItemBodyContent = ({ data }: any) => {
+const ListItemBodyContent = ({ data, handleShowMoreActivityList }: any) => {
     return (
         <>
             {data?.map((item: any) => (
@@ -35,20 +37,20 @@ const ListItemBodyContent = ({ data }: any) => {
                     />
                     <View style={styles.containerCreated}>
                         <Text style={styles.username}>{item.user}</Text>
-                        <Text>{item?.createdAt}</Text>
+                        <Text>{item?.pastTime}</Text>
                     </View>
-                    <View style={{ ...styles.containerEvent, marginBottom: item.activityType ? 20 : 20 }}>
+                    <View style={{ ...styles.containerEvent, marginBottom: item.activityType === 'Commented in' ? 5 : 20 }}>
                         <Text>{item.activityType}</Text>
-                        <Text style={styles.eventName}>{item?.eventName}</Text>
+                        <Text style={styles.eventName}> {item?.activityName}</Text>
                     </View>
-                    {item.activity && <Text style={styles.activity}>"{item.activityDescription}"</Text>}
+                    {item.activityType === 'Commented in' && <Text style={styles.activity}>"{item.activityDescription}"</Text>}
                 </View>
             ))}
         </>
     )
 }
 
-const ListActivity = ({ data }: any) => {
+const ListActivity = ({ data, handleShowMoreActivityList }: any) => {
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -68,7 +70,7 @@ const ListActivity = ({ data }: any) => {
             >
                 <ListItem containerStyle={styles.listItemBodyContainer}>
                     <ListItem.Content>
-                        <ListItemBodyContent data={data} />
+                        <ListItemBodyContent data={data} handleShowMoreActivityList={handleShowMoreActivityList}/>
                     </ListItem.Content>
                 </ListItem>
             </ListItem.Accordion>

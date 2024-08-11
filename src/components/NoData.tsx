@@ -2,11 +2,13 @@ import { StyleSheet } from "react-native";
 
 import { Card, Text } from "@rneui/themed";
 
-const NoData = ({ data }: any) => {
+type NoDataProps = { data: any };
+
+const NoData = ({ data }: NoDataProps) => {
     return (
         <>
-            {data.length === 0 && <Card containerStyle={styles.eventCard}>
-                <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>No Data</Text>
+            {data.length && <Card containerStyle={styles.eventCard}>
+                <Text style={styles.textStyle}>No Data</Text>
             </Card>}
         </>
     )
@@ -15,6 +17,10 @@ const NoData = ({ data }: any) => {
 const styles = StyleSheet.create({
     eventCard: {
         borderRadius: 13
+    },
+    textStyle: {
+        textAlign: 'center',
+        fontWeight: 'bold'
     }
 });
 

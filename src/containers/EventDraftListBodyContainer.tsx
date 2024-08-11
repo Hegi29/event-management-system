@@ -5,11 +5,11 @@ import { Card } from "@rneui/themed";
 import SearchContainer from "./SearchContainer";
 import EventListContainer from "./EventListContainer";
 
-const EventDraftListBodyContainer = ({ data, setSelectedStatus }: any) => {
+const EventDraftListBodyContainer = ({ data, setSelectedSearch, totalItemRequest, handleShowMore }: any) => {
   return (
     <Card containerStyle={styles.card}>
-      {data.data && <SearchContainer title='event' setSelectedStatus={setSelectedStatus} setSelectedSearch={undefined} />}
-      {data.data && <EventListContainer data={data.data} />}
+      {data.data && <SearchContainer title='event' setSelectedStatus={null} setSelectedSearch={setSelectedSearch} />}
+      {data.data && <EventListContainer data={data.data} totalItemRequest={totalItemRequest} handleShowMore={handleShowMore} />}
     </Card>
   )
 }

@@ -1,42 +1,30 @@
-import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { useEffectLogin } from "../hooks";
+import { LoginContainer } from "../containers";
 
-import { Button, Input, Text } from "@rneui/themed";
+// import { authorize } from 'react-native-app-auth';
+// import { useEffect } from "react";
 
-import { storage } from "../utils/Storage";
-import { USERS } from "../constants/mock";
+// const config = {
+//     issuer: '"https://login.qa.idaman.pertamina.com',
+//     clientId: '6732a6b1-7afd-4646-b70d-9050c10f127d',
+//     redirectUrl: 'https://localhost:5137',
+//     scopes: ['api.auth', 'user.read']
+// };
 
 const Login: React.FunctionComponent<any> = ({ navigation }: any) => {
-    const [email, setEmail] = useState('');
+    const [handleLogin] = useEffectLogin(navigation);
 
-    const onChangeEmail = (value: string) => {
-        setEmail(value);
-    }
+    // const test = async () => {
+    //     const result = await authorize(config);
+    //     console.log("🚀 ~ test ~ result:", result)
+    // }
 
-    const handleLogin = () => {
-        const emailFound = USERS.find(x => x.email === email);
-        if (emailFound) {
-            storage.set('user.email', emailFound.role_id === 1 ? emailFound.email : '');
-            storage.set('user.photo', emailFound.photo_profile_url);
-            storage.set('user.fullname', emailFound.full_name);
-            storage.set('user.firstname', emailFound.first_name);
-            storage.set('user.rolename', emailFound.role_name);
-            storage.set('user.roleid', emailFound.role_id.toString());
-            navigation.navigate('Home');
-        }
-    }
-
-    useEffect(() => {
-        setEmail('');
-        storage.clearAll();
-    }, []);
+    // useEffect(() => {
+    //     test();
+    // }, []);
 
     return (
-        <View style={{ marginTop: 40, padding: 20 }}>
-            <Text>Email</Text>
-            <Input onChangeText={value => onChangeEmail(value)} />
-            <Button title='Login' onPress={handleLogin} />
-        </View>
+        <LoginContainer handleLogin={handleLogin} />
     );
 };
 

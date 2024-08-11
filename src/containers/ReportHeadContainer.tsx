@@ -4,15 +4,16 @@ import { Button, Card, Icon, Image, Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 import { ExportImage } from "../assets/images";
+
 import { SUBTITLE_EVENT } from "../constants";
 
 const ActionButton = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation() as any;
 
     return (
         <View style={styles.buttonWrapper}>
             <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-            <Button title="Add New Report" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+            <Button title="Add New Report" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent')} icon={<Icon name="add" size={24} color="#fff" />} />
         </View>
     )
 }

@@ -2,7 +2,7 @@ import SearchContainer from "./SearchContainer";
 
 const UsersBodyContainer = () => {
     return (
-        <SearchContainer title="users" setSelectedStatus={undefined} setSelectedSearch={undefined}/>
+        <SearchContainer title="users" />
     )
 }
 

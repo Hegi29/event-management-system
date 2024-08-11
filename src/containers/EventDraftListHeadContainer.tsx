@@ -5,14 +5,21 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ExportImage } from "../assets/images";
 import { SUBTITLE_EVENT, TITLE_EVENT_DRAFT } from "../constants";
+import { useDispatch } from "react-redux";
+import { setIsCreateNewEvent } from "../redux/reducers/urlParamSlice";
 
 const ActionButton = () => {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
+    const handleNav = () => {
+        navigation.navigate('CreateEvent' as never);
+        dispatch(setIsCreateNewEvent(false));
+    }
     return (
         <View style={styles.buttonWrapper}>
             <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-            <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+            <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={handleNav} icon={<Icon name="add" size={24} color="#fff" />} />
         </View>
     )
 }

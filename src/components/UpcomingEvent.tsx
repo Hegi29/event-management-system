@@ -2,27 +2,14 @@ import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Card, Icon, ListItem, Text } from "@rneui/themed";
-import Modal from "react-native-modal";
 
-import { COORDINATION_MEETING_LIST } from "../constants/mock";
 import { getMonthName } from "../utils/Date";
 import { TITLE_HOME_C } from "../constants";
-
-import Datepicker from "./Datepicker";
+import DatepickerModal from "./DatepickerModal";
 
 const RenderTitleDatepicker = ({ selectedDate }: any) => {
     return (
         <Text style={styles.titleDatepicker}>{getMonthName(selectedDate.startDate).slice(0, 4)} {selectedDate.startDate?.getDate()}, {selectedDate.startDate?.getFullYear()} – {getMonthName(selectedDate.endDate).slice(0, 4)} {selectedDate.endDate?.getDate()}, {selectedDate.endDate?.getFullYear()}</Text>
-    )
-}
-
-const DatepickerModal = ({ isModalVisible, toggleModal, setSelectedDate }: any) => {
-    return (
-        <Modal isVisible={isModalVisible} style={{ height: 50 }}>
-            <View style={styles.datepickerContainer}>
-                <Datepicker toggleModal={toggleModal} setSelectedDate={setSelectedDate} />
-            </View>
-        </Modal>
     )
 }
 
@@ -49,23 +36,26 @@ const IconChevron = () => {
     )
 }
 
-const ListItemBodyContent = () => {
+const ListItemBodyContent = ({ dataEventByDate }: any) => {
     return (
         <>
-            {COORDINATION_MEETING_LIST.map((item) => (
+            {dataEventByDate.map((item: any) => (
                 <View key={item.eventId} style={styles.eventCard}>
-                    <Text style={styles.heading}>{item.eventDate}</Text>
+                    <Text style={styles.heading}>{item.beHeld}</Text>
                     <Card key={item.eventId} containerStyle={styles.eventCard}>
-                        <Text style={styles.eventName}>{item.eventName}</Text>
-                        <Text style={styles.date}>{item.eventPlace}</Text>
+                        <Text style={styles.eventName}>{item.eventActivityName}</Text>
+                        <Text style={styles.date}>{item.venue}</Text>
                     </Card>
                 </View>
             ))}
+            {dataEventByDate.length === 0 && <Text style={{ textAlign: 'center', fontWeight: 'semibold' }}>No Data</Text>}
         </>
     )
 }
 
-const UpcomingEvent = ({ dataEventByDate, setSelectedDate, selectedDate }: any) => {
+type UpcomingEventProps = { dataEventByDate: any, setSelectedDate: any, selectedDate: any };
+
+const UpcomingEvent = ({ dataEventByDate, setSelectedDate, selectedDate }: UpcomingEventProps) => {
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -75,7 +65,7 @@ const UpcomingEvent = ({ dataEventByDate, setSelectedDate, selectedDate }: any) 
 
     return (
         <>
-            <DatepickerModal isModalVisible={isModalVisible} toggleModal={toggleModal} setSelectedDate={setSelectedDate} />
+            <DatepickerModal isModalVisible={isModalVisible} toggleModal={toggleModal} setSelectedDate={setSelectedDate} isRange={true} />
             <Card containerStyle={styles.card}>
                 <ListItem.Accordion
                     containerStyle={styles.accordionContainer}
@@ -92,7 +82,7 @@ const UpcomingEvent = ({ dataEventByDate, setSelectedDate, selectedDate }: any) 
                 >
                     <ListItem containerStyle={styles.listItemBodyContainer}>
                         <ListItem.Content>
-                            <ListItemBodyContent />
+                            <ListItemBodyContent dataEventByDate={dataEventByDate} />
                         </ListItem.Content>
                     </ListItem>
                 </ListItem.Accordion>
@@ -119,12 +109,6 @@ const styles = StyleSheet.create({
     },
     date: {
         marginTop: 10
-    },
-    datepickerContainer: {
-        marginTop: 100,
-        display: 'flex',
-        flexWrap: 'wrap',
-        marginLeft: -20
     },
     eventCard: {
         borderRadius: 13,

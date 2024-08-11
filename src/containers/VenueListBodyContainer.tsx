@@ -5,11 +5,11 @@ import { Card } from "@rneui/themed";
 import SearchContainer from "./SearchContainer";
 import VenueListContainer from "./VenueListContainer";
 
-const VenueListBodyContainer = ({ data, setSelectedStatus, setSelectedSearch }: any) => {
+const VenueListBodyContainer = ({ data, setSelectedStatus, setSelectedSearch, totalItemRequest, handleShowMore }: any) => {
     return (
         <Card containerStyle={styles.cardContainer}>
-            <SearchContainer title='venue' setSelectedStatus={setSelectedStatus} setSelectedSearch={setSelectedSearch}/>
-            <VenueListContainer data={data} />
+            <SearchContainer title='venue' setSelectedStatus={setSelectedStatus} setSelectedSearch={setSelectedSearch} />
+            <VenueListContainer data={data} totalItemRequest={totalItemRequest} handleShowMore={handleShowMore} />
         </Card>
     )
 }

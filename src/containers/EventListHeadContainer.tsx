@@ -2,20 +2,27 @@ import { StyleSheet, View } from "react-native";
 
 import { Button, Card, Icon, Image, Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 import { ExportImage } from "../assets/images";
+import { selectAccount } from "../redux/reducers/accountSlice";
 
 import { SUBTITLE_EVENT, TITLE_EVENT } from "../constants";
 import { EventDashboard } from "../components";
 
 const EventListHeadContainer = ({ dashboardData }: any) => {
-    const navigation = useNavigation();
+    const navigation = useNavigation() as any;
+    const accountData = useSelector(selectAccount);
+
+    const handleNav = () => {
+        navigation.navigate('CreateEvent', { isDraft: false });
+    }
 
     const ActionButton = () => {
         return (
             <View style={styles.buttonWrapper}>
                 <Button title="Export" type='outline' buttonStyle={styles.buttonExport} titleStyle={{ color: '#000' }} icon={<Image source={ExportImage} style={styles.image} />} />
-                <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+                <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={handleNav} icon={<Icon name="add" size={24} color="#fff" />} />
             </View>
         )
     }
@@ -24,7 +31,7 @@ const EventListHeadContainer = ({ dashboardData }: any) => {
         <Card containerStyle={styles.cardContainer}>
             <Text style={styles.title}>{TITLE_EVENT}</Text>
             <Text style={styles.subtitle}>{SUBTITLE_EVENT}</Text>
-            <ActionButton />
+            {(accountData.account.roleid === '1' || accountData.account.roleid === '6') && <ActionButton />}
             <EventDashboard dashboardData={dashboardData} />
         </Card>
     )

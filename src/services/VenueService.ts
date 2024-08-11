@@ -1,26 +1,49 @@
 import axios from "axios";
 
 import { BASE_URL, TIMEOUT_AXIOS } from "../constants";
-import { storage } from "../utils/Storage";
 
 axios.defaults.timeout = TIMEOUT_AXIOS;
 
-const email = storage.getString('user.email');
-
-const CreateVenue = async (data: any) => {
+const CreateVenue = (data: any) => {
     const url = `${BASE_URL}/Venue/Create`;
-    const response = await axios.post(url, data);
-    console.log(response.data);
-    return response;
+    
+    axios.post(url, data)
+        .then(function (response) {
+            return response;
+        })
+        .catch(function (error) {
+            console.log('error: ', JSON.stringify(error));
+        });
 };
 
-const GetVenueByKeyword = async (data: any) => {
-    const param = {
-        "keyword": data
-    };
+const GetVenueByKeyword = async (value: any) => {
     const url = `${BASE_URL}/Venue/GetVenueByKeyword`;
-    const response = await axios.post(url, param);
-    return response.data;
+
+    return axios.post(url, { keyword: value })
+        .then(function (response) {
+            return response.data;
+        })
+        .catch(function (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                // http.ClientRequest in node.js
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log('Error', error.message);
+            }
+
+            console.log(error.config);
+
+            return error;
+        });
 };
 
 const UpdateVenue = async (data: any) => {
@@ -39,7 +62,7 @@ const UpdateAllVenueExpiredStatus = async (data: any) => {
 
 const GetVenueList = async (param: any) => {
     try {
-        const query = `isDraft=${param.isDraft}&status=${param.status}&pageSize=${param.pageSize}&pageNumber=${param.pageNumber}&keyword=${param.keyword}&email=${email}`;
+        const query = `isDraft=${param.isDraft}&status=${param.status}&pageSize=${param.pageSize}&pageNumber=${param.pageNumber}&keyword=${param.keyword}&email=${param.email}`;
         const url = `${BASE_URL}/Venue/GetVenueList?${query}`;
         const response = await axios.get(url);
         return response.data;
@@ -48,9 +71,10 @@ const GetVenueList = async (param: any) => {
     }
 };
 
-const GetVenueStatusList = async () => {
+const GetVenueStatusList = async (email: string) => {
     try {
-        const url = `${BASE_URL}/Venue/GetAllVenueStatus?email=${email}`;
+        const query = `email=${email}`;
+        const url = `${BASE_URL}/Venue/GetAllVenueStatus?${query}`;
         const response = await axios.get(url);
         return response.data;
     } catch (error) {

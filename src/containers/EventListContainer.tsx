@@ -2,17 +2,24 @@ import { StyleSheet } from "react-native";
 
 import { Button, Card, Image, Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 
+import { setIsDetailEvent } from "../redux/reducers/urlParamSlice";
 import { DetailEventImage } from "../assets/images";
 import { formatEventDate } from "../utils/Date";
-import { ChipStatus, NoData } from "../components";
+import { ChipStatus } from "../components";
 
-const EventListContainer = ({ data }: any) => {
-    const navigation = useNavigation();
+const EventListContainer = ({ data, totalItemRequest, handleShowMore }: any) => {
+    const navigation = useNavigation() as any;
+    const dispatch = useDispatch();
+
+    const handleDetail = (eventId: string, venueId: string) => {
+        dispatch(setIsDetailEvent(true));
+        navigation.navigate('EventDetail', { eventId, venueId });
+    }
 
     return (
         <>
-            <NoData data={data} />
             {data?.map((item: any) => (
                 <Card key={item.eventId} containerStyle={styles.eventCard}>
                     <Image source={{ uri: item.venue?.images[0]?.data }} resizeMode='cover' style={styles.image} />
@@ -21,10 +28,11 @@ const EventListContainer = ({ data }: any) => {
                     <Text style={styles.date}>{formatEventDate(item.activityStartDate, item.activityEndDate)}</Text>
                     <Text style={styles.province}>{item.venue?.subDistric}, {item.venue?.province}</Text>
                     <ChipStatus status={item.status} />
-                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} onPress={() => navigation.navigate('EventDetail' as never)} />
+                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} onPress={() => handleDetail(item.eventId, item.venue.venueId)} />
                     <Text style={styles.submitDate}>{item.created}</Text>
                 </Card>
             ))}
+            {totalItemRequest > data.length && <Button title='Show More' buttonStyle={{ borderRadius: 13, marginTop: 15, width: '50%' }} containerStyle={{ alignItems: 'center' }} onPress={handleShowMore} />}
         </>
     )
 }

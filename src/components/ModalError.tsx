@@ -11,11 +11,11 @@ const ActionButton = ({ handleOk }: any) => {
     )
 }
 
-const ModalError = ({ isModalVisible, handleOk, statusCode, message }: any) => {
+const ModalError = ({ isModalVisible, handleOk, statusCode, message, showCode = true }: any) => {
     return (
         <Modal isVisible={isModalVisible} style={{ height: 50 }}>
             <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 10 }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, textAlign: 'center' }}>Error {statusCode}</Text>
+                {showCode && <Text style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, textAlign: 'center' }}>Error {statusCode}</Text>}
                 <Text style={{ textAlign: 'center' }}>{message}</Text>
                 <ActionButton handleOk={handleOk} />
             </View>

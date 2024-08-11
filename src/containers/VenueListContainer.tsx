@@ -4,10 +4,11 @@ import { Button, Card, Icon, Image, Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 import { CalendarImage, CheckedImage, DetailEventImage, PhoneImage } from "../assets/images";
+
 import { NoData } from "../components";
 
 const VenueListData = ({ data }: any) => {
-    const navigation = useNavigation();
+    const navigation = useNavigation() as any;
 
     return (
         <>
@@ -32,12 +33,6 @@ const VenueListData = ({ data }: any) => {
                             <Text style={{ ...styles.province, marginTop: -1 }}>Verified on {item.verified}</Text>
                         </View>
                     }
-
-                    {/* {item.status === 'hsse' &&
-                        <View style={styles.hsseContainer}>
-                            <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> HSSE rating {item.hsse}</Text>
-                        </View>
-                    } */}
 
                     {item.status === 'Waiting for review' &&
                         <View style={styles.eventContainer}>
@@ -79,19 +74,20 @@ const VenueListData = ({ data }: any) => {
                             <Text style={{ color: '#067647' }}><Icon name='circle' type="font-awesome" size={10} color='#067647' /> Environment {item.environment}</Text>
                         </View>
                     </View>
-                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} onPress={() => navigation.navigate('EventDetail' as never)} />
+                    <Button title="View Details" icon={<Image source={DetailEventImage} style={styles.imageIconDetail} />} buttonStyle={styles.buttonColor} containerStyle={styles.button} onPress={() => navigation.navigate('EventDetail')} />
                     <Text style={styles.updatedDate}>{item.created}</Text>
                 </Card>
             ))}
+            {(data === null || data?.length === 0) && <NoData data={data} />}
         </>
     )
 }
 
-const VenueListContainer = ({ data }: any) => {
+const VenueListContainer = ({ data, totalItemRequest, handleShowMore }: any) => {
     return (
         <View style={styles.viewContainer}>
-            <NoData data={data} />
             <VenueListData data={data} />
+            {totalItemRequest > data.length && <Button title='Show More' buttonStyle={{ borderRadius: 13, marginTop: 15, width: '50%' }} containerStyle={{ alignItems: 'center' }} onPress={handleShowMore} />}
         </View>
     )
 }

@@ -3,20 +3,16 @@ import { StyleSheet, View } from "react-native";
 import { Icon, Text } from "@rneui/themed";
 import SelectDropdown from "react-native-select-dropdown";
 
-const listStatus = [
-    { title: 'All Status' },
-    { title: 'Health' },
-    { title: 'Security' },
-    { title: 'Safety' },
-    { title: 'Environment' }
-];
+import { LIST_STATUS_SECTION } from "../constants";
 
-const SelectSection = ({ setSelectedStatus }: any) => {
+type SelectSectionProps = { setSelectedSection: (value: string) => void };
+
+const SelectSection = ({ setSelectedSection }: SelectSectionProps) => {
     return (
         <SelectDropdown
-            data={listStatus}
+            data={LIST_STATUS_SECTION}
             onSelect={(selectedItem) => {
-                setSelectedStatus(selectedItem.title);
+                setSelectedSection(selectedItem.title);
             }}
             renderButton={(selectedItem, isOpened) => {
                 return (
@@ -25,7 +21,7 @@ const SelectSection = ({ setSelectedStatus }: any) => {
                             <Icon name={selectedItem.icon} style={styles.dropdownButtonIconStyle} />
                         )}
                         <Text style={styles.dropdownButtonTxtStyle}>
-                            {(selectedItem && selectedItem.title) || 'Status'}
+                            {(selectedItem && selectedItem.title) || 'Section'}
                         </Text>
                         <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} type="material-community" style={styles.dropdownButtonArrowStyle} />
                     </View>

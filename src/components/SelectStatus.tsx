@@ -3,16 +3,14 @@ import { StyleSheet, View } from "react-native";
 import { Icon, Text } from "@rneui/themed";
 import SelectDropdown from "react-native-select-dropdown";
 
-const listStatus = [
-    { title: 'All Status' },
-    { title: 'Submitted' },
-    { title: 'Unsubmitted' }
-];
+import { LIST_STATUS_SUBMIT } from "../constants";
 
-const SelectStatus = ({ setSelectedStatus }: any) => {
+type SelectStatusProps = { setSelectedStatus: any };
+
+const SelectStatus = ({ setSelectedStatus }: SelectStatusProps) => {
     return (
         <SelectDropdown
-            data={listStatus}
+            data={LIST_STATUS_SUBMIT}
             onSelect={(selectedItem) => {
                 setSelectedStatus(selectedItem.title);
             }}

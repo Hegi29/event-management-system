@@ -6,9 +6,13 @@ axios.defaults.timeout = TIMEOUT_AXIOS;
 
 const PostComment = async (data: any) => {
     const url = `${BASE_URL}/Comment/Create`;
-    const response = await axios.post(url, data);
-    console.log(response.data);
-    return response;
+    axios.post(url, data)
+        .then(function (response) {
+            return response;
+        })
+        .catch(function (error) {
+            console.log('error: ', JSON.stringify(error));
+        });
 };
 
 export default PostComment;

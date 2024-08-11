@@ -115,19 +115,28 @@ const styles = StyleSheet.create({
         backgroundColor: '#FEE4E2',
         borderStyle: 'solid',
         borderColor: '#F04438',
-        paddingVertical: 5, paddingHorizontal: 10, borderWidth: 1, borderRadius: 30
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
     },
     BGColorComplete: {
         backgroundColor: '#ABEFC6',
         borderStyle: 'solid',
         borderColor: '#079455',
-        paddingVertical: 5, paddingHorizontal: 10, borderWidth: 1, borderRadius: 30
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
     },
     BGColorReview: {
         backgroundColor: '#E0F2FE',
         borderStyle: 'solid',
         borderColor: '#026AA2',
-        paddingVertical: 5, paddingHorizontal: 10, borderWidth: 1, borderRadius: 30
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderRadius: 30
     }
 });
 

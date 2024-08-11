@@ -4,61 +4,64 @@ import { Card, Image, Text } from "@rneui/themed";
 
 import { RequestRevisionImage, ReviewCompleteImage, UnderReviewImage, WaitingReviewImage } from "../assets/images";
 
-const CardWaitingForReview = ({ waitingForReview }: any) => {
+type CardProps = { value: number };
+type VenueDashboardProps = { dashboardData: any };
+
+const CardWaitingForReview = ({ value }: CardProps) => {
     return (
         <Card containerStyle={styles.cardWaiting} wrapperStyle={styles.cardWrapper}>
             <View style={styles.imageWrapper}>
                 <Image style={styles.image} source={WaitingReviewImage} />
-                <Text style={{ ...styles.textCard, color: '#0BA5EC' }}>{waitingForReview ?? 0}</Text>
+                <Text style={{ ...styles.textCard, color: '#0BA5EC' }}>{value ?? 0}</Text>
             </View>
             <Text style={{ fontWeight: 'bold', fontSize: 17 }}>Waiting For Review Venues</Text>
         </Card>
     )
 }
 
-const CardUnderReview = ({ underReview }: any) => {
+const CardUnderReview = ({ value }: CardProps) => {
     return (
         <Card containerStyle={styles.cardReview} wrapperStyle={styles.cardWrapper}>
             <View style={styles.imageWrapper}>
                 <Image style={styles.image} source={UnderReviewImage} />
-                <Text style={{ ...styles.textCard, color: '#DF4D52' }}>{underReview ?? 0}</Text>
+                <Text style={{ ...styles.textCard, color: '#DF4D52' }}>{value ?? 0}</Text>
             </View>
             <Text style={{ fontWeight: 'bold', fontSize: 17 }}>Under Review Venues</Text>
         </Card>
     )
 }
 
-const CardRequestExpired = ({ requestExpired }: any) => {
+const CardRequestExpired = ({ value }: CardProps) => {
     return (
         <Card containerStyle={styles.cardRevision} wrapperStyle={styles.cardWrapper}>
             <View style={styles.imageWrapper}>
                 <Image style={styles.image} source={RequestRevisionImage} />
-                <Text style={{ ...styles.textCard, color: '#F79009' }}>{requestExpired ?? 0}</Text>
+                <Text style={{ ...styles.textCard, color: '#F79009' }}>{value ?? 0}</Text>
             </View>
             <Text style={{ fontWeight: 'bold', fontSize: 17 }}>Request Expired Venues</Text>
         </Card>
     )
 }
 
-const CardRegisteresVenues = ({ reviewComplete }: any) => {
+const CardRegisteresVenues = ({ value }: CardProps) => {
     return (
         <Card containerStyle={styles.cardComplete} wrapperStyle={styles.cardWrapper}>
             <View style={styles.imageWrapper}>
                 <Image style={styles.image} source={ReviewCompleteImage} />
-                <Text style={{ ...styles.textCard, color: '#17B26A' }}>{reviewComplete ?? 0}</Text>
+                <Text style={{ ...styles.textCard, color: '#17B26A' }}>{value ?? 0}</Text>
             </View>
             <Text style={{ fontWeight: 'bold', fontSize: 17 }}>Registered Venues</Text>
         </Card>
     )
 }
 
-const VenueDashboard = ({ dashboardData }: any) => {
+const VenueDashboard = ({ dashboardData }: VenueDashboardProps) => {
     return (
         <View style={styles.cardContainer}>
-            <CardWaitingForReview waitingForReview={dashboardData?.waitingForReview} />
-            <CardUnderReview underReview={dashboardData?.underReview} />
-            <CardRequestExpired requestExpired={dashboardData?.requestExpired} />
-            <CardRegisteresVenues reviewComplete={dashboardData?.reviewComplete} />
+            <CardWaitingForReview value={dashboardData?.waitingForReview} />
+            <CardUnderReview value={dashboardData?.underReview} />
+            <CardRequestExpired value={dashboardData?.requestExpired} />
+            <CardRegisteresVenues value={dashboardData?.reviewComplete} />
         </View>
     )
 }

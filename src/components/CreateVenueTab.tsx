@@ -6,7 +6,7 @@ import { Tab } from '@rneui/themed';
 import { CREATE_VENUE_TAB, EVENT_DETAIL_TAB_IDX } from '../constants';
 import { EnvironmentTab, HealthTab, SafetyTab, SecurityTab, VenueDetailTab } from './tabs';
 
-const CreateVenueTab = () => {
+const CreateVenueTab = ({ isDraft, dataVenue, setSelectedSearch, setSelectedVenueID, setSelectedSection, dataQuestions }: any) => {
     const [index, setIndex] = useState(EVENT_DETAIL_TAB_IDX);
 
     return (
@@ -65,11 +65,11 @@ const CreateVenueTab = () => {
                 // icon={{ name: 'home', type: 'material', color: '#1072BA' }}
                 />
             </Tab>
-            {index === CREATE_VENUE_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} tipe="venue" />}
-            {index === CREATE_VENUE_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} tipe="venue" />}
-            {index === CREATE_VENUE_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} tipe="venue" />}
-            {index === CREATE_VENUE_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} tipe="venue" />}
-            {index === CREATE_VENUE_TAB.ENVIRONMENT && <EnvironmentTab index={index} setIndex={setIndex} tipe="venue" />}
+            {index === CREATE_VENUE_TAB.VENUE_DETAIL && <VenueDetailTab index={index} setIndex={setIndex} isDraft={isDraft} dataVenue={dataVenue} tipe='venue' setSelectedSearch={setSelectedSearch} setSelectedVenueID={setSelectedVenueID} setSelectedSection={setSelectedSection} allEvidenceList={undefined} />}
+            {index === CREATE_VENUE_TAB.HEALTH && <HealthTab index={index} setIndex={setIndex} isDraft={isDraft} setSelectedSection={setSelectedSection} tipe='venue' dataQuestions={dataQuestions} />}
+            {index === CREATE_VENUE_TAB.SECURITY && <SecurityTab index={index} setIndex={setIndex} isDraft={isDraft} setSelectedSection={setSelectedSection} tipe='venue' dataQuestions={dataQuestions} />}
+            {index === CREATE_VENUE_TAB.SAFETY && <SafetyTab index={index} setIndex={setIndex} isDraft={isDraft} setSelectedSection={setSelectedSection} tipe='venue' dataQuestions={dataQuestions} />}
+            {index === CREATE_VENUE_TAB.ENVIRONMENT && <EnvironmentTab index={index} setIndex={setIndex} isDraft={isDraft} setSelectedSection={setSelectedSection} tipe='venue' dataQuestions={dataQuestions} />}
         </View>
     );
 };

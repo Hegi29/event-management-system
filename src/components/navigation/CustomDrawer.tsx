@@ -4,26 +4,21 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Button, Icon, Image, Input, ListItem, Text } from "@rneui/themed";
 import { ScrollView } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 
 import { APP_TITLE } from "../../constants";
+import { selectAccount } from "../../redux/reducers/accountSlice";
 import { storage } from "../../utils/Storage";
 
 import ModalLogOut from "../ModalLogOut";
 import BottomNavigation from "./BottomNavigation";
 
-const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentRoute } }: any) => {
+const CustomDrawerContent = ({ navigation }: any) => {
+    const accountData = useSelector(selectAccount);
+
     const [expanded, setExpanded] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    
-    const roleId = storage.getString('user.roleid');
 
-    // const routeState = isReady ? getCurrentRoute() : '';
-
-    // useEffect(() => {
-    //     if(routeState.name !== 'EventDraft' && expanded) {
-    //         setExpanded(false);
-    //     }
-    // }, [routeState.name, expanded])
 
     const handleLogOut = () => {
         setIsModalVisible(!isModalVisible);
@@ -65,14 +60,15 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                     onPress={() => {
                         navigation.navigate('Home');
                     }}
-                    // containerStyle={{...styles.buttonContainer, backgroundColor: routeState?.name !== 'Home' ? '#408EC9' : '#408EF9'}}
                     containerStyle={{ ...styles.buttonContainer, backgroundColor: '#408EC9' }}
-                ><Icon name="home" color="white" />Home</Button>
-                {(roleId === '1' || roleId === '6') &&
+                >
+                    <Icon name="home" color="white" reverse={false} type="material" />
+                    Home
+                </Button>
+                {(accountData?.account.roleid === '1' || accountData?.account.roleid === '6') &&
                     <ListItem.Accordion
                         style={{ ...styles.buttonTitle, paddingLeft: 0, opacity: 10 }}
-                        // containerStyle={{ backgroundColor: routeState?.name !== 'Event' ? '#408EC9' : '#408EF9', paddingLeft: 0 }}
-                        containerStyle={{ backgroundColor: '#408EC8', paddingLeft: 0 }}
+                        containerStyle={{ backgroundColor: '#408EC8', paddingLeft: 0, marginTop: -10, marginBottom: -15 }}
                         content={
                             <ListItem.Content>
                                 <Button
@@ -104,7 +100,7 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                                 <Button
                                     titleStyle={styles.buttonTitle}
                                     style={{ alignItems: 'flex-start' }}
-                                    containerStyle={{ marginLeft: 8 }}
+                                    containerStyle={{ marginLeft: 8, marginTop: 5, marginBottom: -12 }}
                                     type="clear"
                                     onPress={() => {
                                         navigation.navigate('EventDraft');
@@ -114,7 +110,7 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                         </ListItem>
                     </ListItem.Accordion>
                 }
-                {(roleId !== '1' && roleId !== '6') &&
+                {(accountData?.account.roleid !== '1' && accountData?.account.roleid !== '6') &&
                     <Button
                         titleStyle={styles.buttonTitle}
                         style={{ alignItems: 'flex-start' }}
@@ -122,7 +118,6 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                         onPress={() => {
                             navigation.navigate('Event');
                         }}
-                        // containerStyle={{backgroundColor: routeState?.name !== 'Venue' ? '#408EC9' : '#408EF9'}}
                         containerStyle={{ ...styles.buttonContainerVenue, backgroundColor: '#408EC9', marginTop: 5 }}
                     ><Icon name="today" color="white" />Event</Button>
                 }
@@ -133,8 +128,7 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                     onPress={() => {
                         navigation.navigate('Venue');
                     }}
-                    // containerStyle={{backgroundColor: routeState?.name !== 'Venue' ? '#408EC9' : '#408EF9'}}
-                    containerStyle={{ ...styles.buttonContainerVenue, backgroundColor: '#408EC9', marginTop: roleId === '1' || roleId === '6' ? -10 : 5 }}
+                    containerStyle={{ ...styles.buttonContainerVenue, backgroundColor: '#408EC9', marginTop: accountData?.roleId === '1' || accountData?.roleId === '6' ? -10 : 5 }}
                 ><Icon name="apartment" color="white" />Venue</Button>
                 <Button
                     titleStyle={styles.buttonTitle}
@@ -143,7 +137,6 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                     onPress={() => {
                         navigation.navigate('Report');
                     }}
-                    // containerStyle={{...styles.buttonContainer, backgroundColor: routeState?.name !== 'Report' ? '#408EC9' : '#408EF9'}}
                     containerStyle={{ ...styles.buttonContainer, backgroundColor: '#408EC9', marginTop: 5 }}
                 ><Icon name="pie-chart" color="white" />Report</Button>
                 <Button
@@ -153,7 +146,6 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                     onPress={() => {
                         navigation.navigate('Users');
                     }}
-                    // containerStyle={{...styles.buttonContainer, backgroundColor: routeState?.name !== 'Users' ? '#408EC9' : '#408EF9'}}
                     containerStyle={{ ...styles.buttonContainer, backgroundColor: '#408EC9', marginTop: 5 }}
                 ><Icon name="people" color="white" />Users</Button>
 
@@ -165,7 +157,6 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                         onPress={() => {
                             navigation.navigate('Support');
                         }}
-                        // containerStyle={{...styles.buttonContainer, backgroundColor: routeState?.name !== 'Support' ? '#408EC9' : '#408EF9'}}
                         containerStyle={{ ...styles.buttonContainer, backgroundColor: '#408EC9' }}
                     ><Icon name="support" color="white" />Support</Button>
                     <Button
@@ -175,7 +166,6 @@ const CustomDrawerContent = ({ navigation, navigationRef: { isReady, getCurrentR
                         onPress={() => {
                             navigation.navigate('Setting');
                         }}
-                        // containerStyle={{...styles.buttonContainer, backgroundColor: routeState?.name !== 'Setting' ? '#408EC9' : '#408EF9'}}
                         containerStyle={{ ...styles.buttonContainer, backgroundColor: '#408EC9', marginTop: 5, marginBottom: 80 }}
                     >
                         <Icon name="settings" color="white" />Setting</Button>

@@ -3,7 +3,9 @@ import { View } from "react-native";
 import { Button, Text } from "@rneui/themed";
 import Modal from "react-native-modal";
 
-const ModalLogOut = ({ isModalVisible, handleLogOut, handleOkLogout }: any) => {
+type ModalLogOutProps = { isModalVisible: boolean, handleLogOut: any, handleOkLogout: any };
+
+const ModalLogOut = ({ isModalVisible, handleLogOut, handleOkLogout }: ModalLogOutProps) => {
     return (
         <Modal isVisible={isModalVisible} style={{ height: 50 }}>
             <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 10 }}>

@@ -1,107 +1,66 @@
-import { useState, useEffect } from 'react';
-
 import { ScrollView } from 'react-native-gesture-handler';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-import { GetEventDetailByDateList, GetEventDetailList } from '../services/EventDetail';
-import getActivityList from '../services/ActivityService';
-import { GetTopVenueList } from '../services/VenueService';
+import { selectAccount } from '../redux/reducers/accountSlice';
 
-import { EventRequestingRevision, ListActivity, TopVenue, UpcomingEvent } from '../components';
+import { EventRequestingRevision, ListActivity, TopVenue, UpcomingEvent, VenueUnderReview, VenueWaitingForReview } from '../components';
 import { WelcomeContainer } from '../containers';
+import { useEffectHome } from '../hooks';
+import { ROLE } from '../constants';
 
 const Home: React.FunctionComponent<any> = () => {
-    const [dataEvent, setDataEvent] = useState([]) as any;
-    const [dataTopVenue, setDataTopVenue] = useState([]) as any;
-    const [dataActivity, setDataActivity] = useState([]) as any;
-    const [dataEventByDate, setDataEventByDate] = useState([]) as any;
+    const [
+        dataEventRequest,
+        dataEventWaitingReview,
+        dataTopVenue,
+        dataEventByDate,
+        dataActivity,
+        dataVenueUnderReview,
+        selectedDate,
+        setSelectedDate,
+        totalItemRequest,
+        totalItemUnderReview,
+        totalItemWaitingReview,
+        totalItemTopVenue,
+        totalItemListActivity,
+        handleShowMoreVenueWaiting,
+        handleShowMoreVenueReview,
+        handleShowMoreEventRequest,
+        handleShowMoreTopVenue,
+        handleShowMoreActivityList
+    ] = useEffectHome();
 
-    const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: new Date() }) as any;
-
-    // const [isLoadedEvent, setIsLoadedEvent] = useState(false);
-    // const [isLoadedEventByDate, setIsLoadedEventByDate] = useState(false);
-    // const [isLoadedActivity, setIsLoadedActivity] = useState(false);
-
-    const params = {
-        isDraft: false,
-        status: 'Requesting revision',
-        pageNumber: 1,
-        pageSize: 5,
-        email: '',
-        keyword: ''
-    };
-
-    const fetchEventRequestingList = async () => {
-        try {
-            const response = await GetEventDetailList(params);
-            if (response.status === axios.HttpStatusCode.Ok) {
-                setDataEvent(response.data.data);
-                // setIsLoadedEvent(true);
-            }
-        } catch (error) {
-            console.error(error);
-            // setIsLoadedEvent(false);
-        }
-    }
-
-    const fetchTopVenueList = async () => {
-        try {
-            const response = await GetTopVenueList(params);
-            if (response.status === axios.HttpStatusCode.Ok) {
-                setDataTopVenue(response.data);
-                // setIsLoadedEvent(true);
-            }
-        } catch (error) {
-            console.error(error);
-            // setIsLoadedEvent(false);
-        }
-    }
-
-    const fetchEventByDateList = async () => {
-        try {
-            const param = { starDate: selectedDate.startDate, endDate: selectedDate.endDate };
-            const response = await GetEventDetailByDateList(param);
-            if (response.status === axios.HttpStatusCode.Ok) {
-                setDataEventByDate(response.data);
-                // setIsLoadedEventByDate(true);
-            }
-        } catch (error) {
-            console.error(error);
-            // setIsLoadedEventByDate(false);
-        }
-    }
-
-    const fetchActivityList = async () => {
-        try {
-            const response = await getActivityList(params);
-            if (response.status === axios.HttpStatusCode.Ok) {
-                setDataActivity(response?.data?.data);
-                // setIsLoadedActivity(true);
-            }
-        } catch (error) {
-            console.error(error);
-            // setIsLoadedActivity(false);
-        }
-    }
-
-    useEffect(() => {
-        fetchEventRequestingList();
-        fetchTopVenueList();
-        fetchEventByDateList();
-        fetchActivityList();
-    }, []);
-
-    useEffect(() => {
-        fetchEventByDateList();
-    }, [selectedDate]);
+    const accountData = useSelector(selectAccount);
+    const roleId = accountData.account.roleid;
 
     return (
         <ScrollView>
             <WelcomeContainer />
-            <EventRequestingRevision data={dataEvent} />
-            <TopVenue data={dataTopVenue} />
+            {(roleId !== ROLE.USER && roleId !== ROLE.SUPER_ADMIN) &&
+                <>
+                    <VenueWaitingForReview data={dataEventWaitingReview} totalItemRequest={totalItemWaitingReview} handleShowMoreVenueWaiting={handleShowMoreVenueWaiting} />
+                    <VenueUnderReview data={dataVenueUnderReview} totalItemRequest={totalItemUnderReview} />
+                </>
+            }
+
+            {(roleId === ROLE.USER &&
+                <>
+                    <EventRequestingRevision data={dataEventRequest} totalItemRequest={totalItemRequest} />
+                    <TopVenue data={dataTopVenue} handleShowMoreTopVenue={handleShowMoreTopVenue} />
+                </>
+            )}
+
+            {(roleId === ROLE.SUPER_ADMIN &&
+                <>
+                    <VenueWaitingForReview data={dataEventWaitingReview} totalItemRequest={totalItemWaitingReview} handleShowMoreVenueWaiting={handleShowMoreVenueWaiting} />
+                    <VenueUnderReview data={dataVenueUnderReview} totalItemRequest={totalItemUnderReview} handleShowMoreVenueReview={handleShowMoreVenueReview} />
+                    <EventRequestingRevision data={dataEventRequest} totalItemRequest={totalItemRequest} handleShowMoreEventRequest={handleShowMoreEventRequest} />
+                    <TopVenue data={dataTopVenue} totalItemRequest={totalItemTopVenue} handleShowMoreTopVenue={handleShowMoreTopVenue} />
+                </>
+            )}
+
             <UpcomingEvent dataEventByDate={dataEventByDate} setSelectedDate={setSelectedDate} selectedDate={selectedDate} />
-            <ListActivity data={dataActivity} />
+            <ListActivity data={dataActivity} totalItemRequest={totalItemListActivity} handleShowMoreActivityList={handleShowMoreActivityList} />
         </ScrollView>
     );
 };

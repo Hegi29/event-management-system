@@ -91,6 +91,108 @@ const EVENT_LIST = [
     }
 ];
 const EVENT_LIST_DRAFT = EVENT_LIST.slice(0, 1);
+const MOCK_RETURN_LIST_ACTIVITY = {
+    data: {
+        "status": 200,
+        "message": null,
+        "data": [
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Create new event",
+                "activityDescription": null,
+                "activityName": "Yoshio Prince",
+                "created": "08/06/2024 02:14:03.436",
+                "pastTime": "5 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence ini xlsx on D.3",
+                "activityName": "D.3",
+                "created": "08/06/2024 02:11:50.776",
+                "pastTime": "7 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence recording on A.1",
+                "activityName": "A.1",
+                "created": "08/06/2024 02:11:50.480",
+                "pastTime": "7 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence ini 3gp on A.2",
+                "activityName": "A.2",
+                "created": "08/06/2024 02:11:50.404",
+                "pastTime": "7 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence ini avi on C.3",
+                "activityName": "C.3",
+                "created": "08/06/2024 02:11:50.242",
+                "pastTime": "7 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence ini wmv on C.1",
+                "activityName": "C.1",
+                "created": "08/06/2024 02:11:50.142",
+                "pastTime": "7 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence ini jpeg on C.2",
+                "activityName": "C.2",
+                "created": "08/06/2024 02:11:50.059",
+                "pastTime": "7 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Create new event",
+                "activityDescription": null,
+                "activityName": "Dale House",
+                "created": "08/06/2024 02:09:41.996",
+                "pastTime": "9 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence ini xlsx on D.3",
+                "activityName": "D.3",
+                "created": "08/06/2024 02:07:25.263",
+                "pastTime": "12 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Upload Evidence",
+                "activityDescription": "Uploaded evidence recording on A.1",
+                "activityName": "A.1",
+                "created": "08/06/2024 02:07:25.197",
+                "pastTime": "12 mins ago"
+            },
+            {
+                "user": "ehourigan0@spotify.com",
+                "activityType": "Commented in",
+                "activityDescription": "Tolong ditambahkan lebih banyak gambar",
+                "activityName": "A.1",
+                "created": "08/06/2024 02:07:25.197",
+                "pastTime": "12 mins ago"
+            }
+        ],
+        "totalPage": 13,
+        "totalItem": 123,
+        "pageNumber": 1,
+        "pageSize": 10,
+        "hasNextPage": true,
+        "logEventId": null
+    }
+};
 const TOP_VENUE_LIST = [
     {
         venueId: 1,
@@ -189,6 +291,7 @@ export {
     COORDINATION_MEETING_LIST,
     EVENT_LIST,
     EVENT_LIST_DRAFT,
+    MOCK_RETURN_LIST_ACTIVITY,
     TOP_VENUE_LIST,
     USERS
 }

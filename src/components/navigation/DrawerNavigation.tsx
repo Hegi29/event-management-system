@@ -11,7 +11,7 @@ import TopRightNav from './TopRightNav';
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigation = ({ navigationRef }: any) => {
+const DrawerNavigation = () => {
   return (
     <Drawer.Navigator screenOptions={({ navigation }) => ({
       drawerStyle: styles.drawerBackground,
@@ -21,7 +21,7 @@ const DrawerNavigation = ({ navigationRef }: any) => {
       headerLeft: () => <TopLeftNav />,
       headerRight: () => <TopRightNav navigation={navigation} />
     })}
-      drawerContent={(props) => <CustomDrawerContent {...props} navigationRef={navigationRef} />}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Drawer.Screen name="Home" component={Home} />

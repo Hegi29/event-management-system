@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -6,13 +6,20 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import { Card, Image } from '@rneui/themed';
+import { Button, Card, Image } from '@rneui/themed';
 import DocumentPicker from 'react-native-document-picker';
 
-import { UploadImage } from '../assets/images';
+import { DeleteImage, DocxImage, EmptyFileImage, ExcelFileImage, ImageFileImage, PdfImage, UpdateImage, UploadImage } from '../assets/images';
+import { convertBytes, validateSize } from '../utils/FileSize';
+import RNFetchBlob from 'rn-fetch-blob';
 
-const ImageUpload = () => {
+const ImageUpload = ({ index, handleUploadFile, evidence, tipe, type, roleID }: any) => {
     const [singleFile, setSingleFile] = useState(null) as any;
+    const [filename, setFilename] = useState('');
+    const [filesize, setFilesize] = useState('');
+    const [filetype, setFiletype] = useState('');
+    const [existedUrlFile, setExistedUrlFile] = useState('');
+    const [isError, setIsError] = useState('');
 
     const uploadImage = async () => {
         // Check if any file is selected or not
@@ -44,78 +51,187 @@ const ImageUpload = () => {
     };
 
     const selectFile = async () => {
-        // Opening Document Picker to select one file
         try {
-            const res = await DocumentPicker.pick({
-                // Provide which type of file you want user to pick
-                type: [DocumentPicker.types.images],
-                // There can me more options as well
-                // DocumentPicker.types.allFiles
-                // DocumentPicker.types.images
-                // DocumentPicker.types.plainText
-                // DocumentPicker.types.audio
-                // DocumentPicker.types.pdf
-            });
-            // Printing the log realted to the file
-            console.log('res : ' + JSON.stringify(res));
-            // Setting the state to show single file attributes
-            setSingleFile(res);
+            let res = [] as any;
+
+            if (tipe === 'evidence') {
+                res = await DocumentPicker.pick({
+                    type: [
+                        DocumentPicker.types.images,
+                        DocumentPicker.types.doc,
+                        DocumentPicker.types.docx,
+                        DocumentPicker.types.pdf,
+                        DocumentPicker.types.xls,
+                        DocumentPicker.types.xlsx,
+                        DocumentPicker.types.audio,
+                        DocumentPicker.types.video
+                    ],
+                });
+            } else if (tipe === 'venue image') {
+                res = await DocumentPicker.pick({
+                    type: [DocumentPicker.types.images]
+                });
+            }
+
+            const isValidSize = validateSize(res, tipe);
+            if (isValidSize) {
+                setSingleFile(res);
+                setFilename(res[0].name as string);
+                setFilesize(convertBytes(res[0].size as number));
+                setFiletype(res[0].type as string);
+                setIsError('');
+                const obj = { no: tipe === 'venue image' ? 0 : index, file: res };
+                handleUploadFile(obj);
+            } else {
+                setIsError('File too large, max size is 10MB');
+            }
         } catch (err) {
             setSingleFile(null);
-            // Handling any exception (If any)
+
             if (DocumentPicker.isCancel(err)) {
-                // If user canceled the document selection
-                // alert('Canceled');
+                setSingleFile(null);
+                setFilename('');
+                setFilesize('');
+                setFiletype('');
+                setExistedUrlFile('');
             } else {
-                // For Unknown Error
-                // alert('Unknown Error: ' + JSON.stringify(err));
+                setIsError('Unknown Error: ' + JSON.stringify(err));
                 throw err;
             }
         }
     };
 
+    const handleDownload = () => {
+        // ketika diklik pakai data existedUrlFile
+        const url = evidence[0].fileUrl;
+        // Define the path where you want to save the file
+        const { config, fs } = RNFetchBlob;
+        const downloads = fs.dirs.DownloadDir;
+        const path = `${downloads}/image_${Date.now()}.jpg`; // perlu diperbaiki sesuai tipe filenya
+
+        // Start downloading the image
+        config({
+            fileCache: true,
+            addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: path,
+                description: "Downloading image",
+            },
+        })
+            .fetch("GET", url)
+            .then((res) => {
+                console.log("The file is saved to:", res.path());
+                // Alert.alert(`Image downloaded successfully to: ${res.path()}`);
+            })
+            .catch((error) => {
+                console.error("Error downloading image:", error);
+                // Alert.alert(`Failed to download image due to: ${error}`);
+            });
+    }
+
+    const handleDelete = (id: number) => {
+        setSingleFile(null);
+        setFilename('');
+        setFilesize('');
+        setFiletype('');
+        setExistedUrlFile('');
+        handleUploadFile(null);
+    }
+
+    useEffect(() => {
+        if (evidence && evidence.length > 0) {
+            setFilename(evidence[0]?.fileName);
+            setFiletype(evidence[0]?.fileType);
+            setExistedUrlFile(evidence[0].fileUrl);
+        }
+    }, [])
+
+    const getMyImage = (type: string) => {
+        switch (type) {
+            case 'excel':
+                return ExcelFileImage;
+            case 'docx':
+                return DocxImage;
+            case 'pdf':
+                return PdfImage;
+            case 'image/png':
+            case 'image/jpg':
+                return ImageFileImage;
+            default:
+                return EmptyFileImage
+        }
+    }
+
     return (
         <View style={styles.mainBody}>
-            <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={selectFile}>
-                <Card containerStyle={{ borderRadius: 10, marginHorizontal: 0 }}>
-                    <View>
-                        <View style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }}>
-                            <View style={{ padding: 10, borderWidth: 1, borderColor: '#EAECF0', borderRadius: 10, marginBottom: 10 }}>
-                                <Image source={UploadImage} style={{ height: 25, width: 25 }} />
+            {!evidence &&
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={selectFile}>
+                    <Card containerStyle={tipe === 'evidence' ? styles.cardContainer : styles.cardContainerVenue} >
+                        <View>
+                            <View style={styles.imageContainer}>
+                                <View style={styles.imageView}>
+                                    <Image source={UploadImage} style={styles.imagePreview} />
+                                </View>
                             </View>
+                            <Text style={styles.textClick}>
+                                Click to upload
+                            </Text>
                         </View>
-                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#0D5B95', marginRight: 5, textAlign: 'center' }}>
-                            Click to upload
-                        </Text>
-                    </View>
-                    <Text
-                        style={{
-                            fontSize: 15,
-                            marginTop: 7,
-                            textAlign: 'center',
-                            color: '#475467'
-                        }}>
-                        SVG, PNG, JPG or GIF (max. 800x400px)
-                    </Text>
+                        {tipe === 'venue image' &&
+                            <Text
+                                style={styles.infoType}>
+                                SVG, PNG, JPG or GIF (max. 800x400px)
+                            </Text>
+                        }
+                        {tipe === 'evidence' &&
+                            <Text style={styles.infoType}>
+                                jpg, jpeg, png, heic, doc, docx, xls, xlsx, pdf, mp4, wmv, mkv, mov, 3gp
+                                {'\n'}
+                                (max. 10MB)
+                            </Text>
+                        }
 
-                    {/*Showing the data of selected Single file*/}
-                    {singleFile != null ? (
-                        <Text style={styles.textStyle}>
-                            File Name: {singleFile.name ? singleFile.name : ''}
-                            {'\n'}
-                            Type: {singleFile.type ? singleFile.type : ''}
-                            {'\n'}
-                            File Size: {singleFile.size ? singleFile.size : ''}
-                            {'\n'}
-                            URI: {singleFile.uri ? singleFile.uri : ''}
-                            {'\n'}
-                        </Text>
-                    ) : null}
-                </Card>
-            </TouchableOpacity>
-        </View>
+                        {singleFile != null ? (
+                            <>
+                                <Text style={styles.textStyle}>
+                                    {filename}
+                                    {'\n'}
+                                    {filesize}
+                                    {'\n'}
+                                </Text>
+                            </>
+                        ) : null}
+                        {isError && (
+                            <Text style={styles.textStyle}>
+                                {isError}
+                            </Text>
+                        )}
+                    </Card>
+                </TouchableOpacity>
+            }
+
+            <View style={(evidence && evidence.length > 0) ? styles.evidenceContainer : { marginBottom: 10 }}>
+                {(evidence && evidence.length > 0) &&
+                    <>
+                        <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 10, width: '100%' }}>
+                            <Image source={getMyImage(evidence[0].fileType)} style={styles.image} />
+                            <Text style={styles.filename}>{filename}</Text>
+                        </View>
+                        {['1', '6'].includes(roleID) &&
+                            <Button type='outline' buttonStyle={styles.buttonPrev} titleStyle={{ color: '#0D5B95' }} onPress={selectFile} disabled={type === 'Venue'}>
+                                <Image source={UpdateImage} style={styles.imageIconTitle} />  Update Attachments
+                            </Button>}
+                    </>
+                }
+            </View>
+            {singleFile &&
+                <TouchableOpacity style={styles.buttonDelete} onPress={() => handleDelete(index)} disabled={type === 'Venue'}>
+                    <Image source={DeleteImage} style={styles.imageIconDelete} />
+                </TouchableOpacity>}
+        </View >
     );
 };
 
@@ -125,6 +241,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 20
     },
+    buttonDelete: { marginTop: 15, marginBottom: 8, alignItems: 'center' },
+    buttonPrev: { width: '100%', borderRadius: 10, borderColor: '#0D5B95', borderWidth: 1, backgroundColor: '#fff' },
     buttonStyle: {
         backgroundColor: '#307ecc',
         borderWidth: 0,
@@ -142,6 +260,35 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         fontSize: 16,
     },
+    cardContainer: { borderBottomLeftRadius: 10, borderBottomRightRadius: 10, marginHorizontal: 0, marginBottom: -10 },
+    cardContainerVenue: { borderRadius: 10, marginHorizontal: 0, marginBottom: -10 },
+    evidenceContainer: { backgroundColor: '#fff', marginTop: 20, padding: 10, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, width: '100%' },
+    filename: { fontWeight: 'bold', marginBottom: 20, marginTop: 20, color: '#000' },
+    imageContainer: { display: 'flex', justifyContent: 'center', flexDirection: 'row' },
+    imageIconDelete: {
+        height: 25,
+        width: 20,
+        marginTop: 0
+    },
+    image: {
+        width: 35,
+        height: 40,
+        margin: 10
+    },
+    imageIconTitle: {
+        height: 20,
+        width: 20,
+        marginTop: 0
+    },
+    imagePreview: { height: 25, width: 25 },
+    imageView: { padding: 10, borderWidth: 1, borderColor: '#EAECF0', borderRadius: 10, marginBottom: 10 },
+    infoType: {
+        fontSize: 15,
+        marginTop: 7,
+        textAlign: 'center',
+        color: '#475467'
+    },
+    textClick: { fontSize: 15, fontWeight: 'bold', color: '#0D5B95', marginRight: 5, textAlign: 'center' },
     textStyle: {
         backgroundColor: '#fff',
         fontSize: 15,

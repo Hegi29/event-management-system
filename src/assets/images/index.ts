@@ -25,13 +25,20 @@ const SelectVenueImage = require('./SelectVenue.png');
 const RingImage = require('./Ring.png');
 const DeleteImage = require('./Delete.png');
 const ChangeImage = require('./Change.png');
+const UpdateImage = require('./Update.png');
+const SendImage = require('./Send.png');
+const PdfImage = require('./PdfFile.png');
+const DocxImage = require('./DocxFile.png');
+const CloseImage = require('./Close.png');
 
 export {
     CalendarImage,
     ChangeImage,
     CheckedImage,
+    CloseImage,
     DeleteImage,
     DetailEventImage,
+    DocxImage,
     EmptyFileImage,
     ExcelFileImage,
     ExportImage,
@@ -41,13 +48,16 @@ export {
     LogoutImage,
     MenuImage,
     NotificationImage,
+    PdfImage,
     PhoneImage,
     RequestRevisionImage,
     ReviewCompleteImage,
     RingImage,
     SelectVenueImage,
+    SendImage,
     TopVenueImage,
     UnderReviewImage,
+    UpdateImage,
     UploadImage,
     WaitingReviewImage,
     WarningFileImage,

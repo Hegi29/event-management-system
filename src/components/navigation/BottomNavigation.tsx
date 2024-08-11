@@ -1,30 +1,31 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Avatar, Image, Text } from "@rneui/themed";
+import { useSelector } from "react-redux";
 
 import { LogoutImage } from "../../assets/images";
-import { storage } from "../../utils/Storage";
+import { selectAccount } from "../../redux/reducers/accountSlice";
 
-const BottomNavigation = ({ handleLogOut }: any) => {
-    const photoUser = storage.getString('user.photo')
-    const fullName = storage.getString('user.fullname')
-    const role = storage.getString('user.rolename')
+type BottomNavigationProps = { handleLogOut: () => void };
+
+const BottomNavigation = ({ handleLogOut }: BottomNavigationProps) => {
+    const accountData = useSelector(selectAccount);
 
     return (
-        <View style={{position: 'absolute', bottom: 0}}>
+        <View style={styles.container}>
             <View style={styles.containerHeader}>
                 <View style={styles.avatarContainer}>
-                    <Avatar
+                    {accountData?.account.photo && <Avatar
                         containerStyle={styles.avatar}
                         size={40}
                         rounded
-                        source={{ uri: photoUser }}
-                    />
-                    <Text style={styles.username}>{fullName}</Text>
-                    <Text style={styles.role}>{role}</Text>
+                        source={{ uri: accountData?.account.photo }}
+                    />}
+                    <Text style={styles.username}>{accountData?.account.fullname}</Text>
+                    <Text style={styles.role}>{accountData?.account.rolename}</Text>
                 </View>
                 <TouchableOpacity onPress={handleLogOut}>
-                    <Image source={LogoutImage} style={{ ...styles.logo }} />
+                    <Image source={LogoutImage} style={styles.logo} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -37,6 +38,10 @@ const styles = StyleSheet.create({
     },
     avatarContainer: {
         marginLeft: 10
+    },
+    container: {
+        position: 'absolute',
+        bottom: 0
     },
     containerHeader: {
         flexDirection: 'row',

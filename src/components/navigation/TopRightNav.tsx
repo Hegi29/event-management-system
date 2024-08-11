@@ -6,7 +6,7 @@ import { MenuImage, NotificationImage } from "../../assets/images";
 
 const TopRightNav = ({ navigation }: any) => {
     return (
-        <View style={{ ...styles.containerHeader, marginRight: 15 }}>
+        <View style={styles.containerHeader}>
             <View style={{ ...styles.containerImage, marginRight: 10 }}>
                 <Image source={NotificationImage} style={styles.imageRight} />
             </View>
@@ -20,7 +20,8 @@ const TopRightNav = ({ navigation }: any) => {
 const styles = StyleSheet.create({
     containerHeader: {
         flexDirection: 'row',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        marginRight: 15
     },
     containerImage: {
         backgroundColor: '#fff',

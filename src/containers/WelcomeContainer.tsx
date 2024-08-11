@@ -1,25 +1,30 @@
-import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 
 import { Button, Card, Icon, Text } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
-import { storage } from "../utils/Storage";
+import { selectAccount } from "../redux/reducers/accountSlice";
+
+const AddIcon = () => {
+    return (
+        <Icon name="add" size={24} color="#fff" />
+    )
+}
 
 const WelcomeContainer = () => {
-    const navigation = useNavigation();
-    const [name, setName] = useState('');
+    const navigation = useNavigation() as any;
+    const accountData = useSelector(selectAccount);
 
-    useEffect(() => {
-        const firstName = storage.getString('user.firstname');
-        setName(firstName as string);
-    }, []);
+    const handleNav = () => {
+        navigation.navigate('CreateEvent', { isDraft: false });
+    }
 
     return (
         <Card containerStyle={styles.cardContainer}>
-            <Text style={styles.title}>Welcome back, {name}</Text>
+            <Text style={styles.title}>Welcome back, {accountData.account.firstname}</Text>
             <Text>Track, manage and forecast your event</Text>
-            <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={() => navigation.navigate('CreateEvent' as never)} icon={<Icon name="add" size={24} color="#fff" />} />
+            {(accountData.account.roleId === '1' || accountData.account.roleId === '6') && <Button title="Add New Event" type='solid' buttonStyle={styles.buttonAdd} onPress={handleNav} icon={<AddIcon />} />}
         </Card>
     )
 }
